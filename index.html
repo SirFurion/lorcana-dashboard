@@ -428,4 +428,275 @@
         </div>
 
         <!-- Années et Chapitres -->
-        <div class="section-title">Suivi par Année &
+        <div class="section-title">Suivi par Année & Chapitres (Clique sur un chapitre)</div>
+        
+        <div class="year-section">
+            <div class="year-title">Année 1</div>
+            <div class="chapters-row" id="year-1-grid"></div>
+        </div>
+
+        <div class="year-section">
+            <div class="year-title">Année 2</div>
+            <div class="chapters-row" id="year-2-grid"></div>
+        </div>
+
+        <div class="year-section">
+            <div class="year-title">Année 3</div>
+            <div class="chapters-row" id="year-3-grid"></div>
+        </div>
+
+        <div class="year-section">
+            <div class="year-title">Année 4</div>
+            <div class="chapters-row" id="year-4-grid"></div>
+        </div>
+
+        <!-- Détails Raretés & Grand Visuel -->
+        <div class="rarities-box">
+            <div class="details-header">
+                <img id="details-icon" class="details-large-icon" alt="Logo Chapitre">
+                <div class="section-title" id="rarities-title" style="margin-bottom: 0;">Récapitulatif Global par Rareté (Tous chapitres sortis cumulés)</div>
+            </div>
+            <div class="rarities-grid" id="rarities-container"></div>
+            <div class="reset-hint" id="reset-hint" style="display: none;" onclick="resetSelection()">🔄 Revenir au récapitulatif global</div>
+        </div>
+
+        <!-- Quête des Illumineurs -->
+        <div class="quest-box">
+            <div class="details-header">
+                <img src="https://api.lorcana.ravensburger.com/images/fr/quest3/thumbnails/f1b6a5dfb5510f8fa4a89977e46715a2af94bfaeca5abcd4b444eb9804781fc4.png" style="width: auto; height: 45px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(243, 206, 120, 0.6));" alt="Logo Quête">
+                <div class="section-title" style="margin-bottom: 0;">Quête des Illumineurs</div>
+            </div>
+            <div class="quest-cards-row">
+                <div class="quest-card owned">
+                    <img src="https://ravensburger.cloud/cms/gallery/lorcana-web/products/iq3-great-hunny-rescue/iq3-product/fr_4rgecedmd4_1920x1080.png" class="quest-card-img" alt="Équipe Miel à la rescousse">
+                    <div class="quest-card-title">Équipe Miel à la rescousse</div>
+                    <div class="quest-status-badge status-owned">✨ Possédé</div>
+                </div>
+
+                <div class="quest-card owned">
+                    <img src="https://ravensburger.cloud/cms/gallery/lorcana-web/products/jafar/iq2/dlc_iq2_product-shot_fr.png" class="quest-card-img" alt="Vol au palais">
+                    <div class="quest-card-title">Vol au palais</div>
+                    <div class="quest-status-badge status-owned">✨ Possédé</div>
+                </div>
+
+                <div class="quest-card owned">
+                    <img src="https://ravensburger.cloud/cms/gallery/lorcana-web/products/dt/fr_9qtnfq4muo.png" class="quest-card-img" alt="Menace des profondeurs">
+                    <div class="quest-card-title">Menace des profondeurs</div>
+                    <div class="quest-status-badge status-owned">✨ Possédé</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sync-status" id="sync-status">Synchronisation avec Google Sheets en cours...</div>
+    </div>
+
+    <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwiuvrw08ikKod2F6caNTy2tjrKEGySGHdIl_-dxksPRk8hmU4tX3O7suF3Y6NKU4oz/exec";
+
+        const rarityIcons = {
+            "Commune": "https://info.oupi.eu/wp-content/uploads/2025/07/commune-lorcana.png.webp",
+            "Peu Commune": "https://info.oupi.eu/wp-content/uploads/2025/07/unco-lorcana.png.webp",
+            "Rare": "https://info.oupi.eu/wp-content/uploads/2025/07/rare-lorcana.png.webp",
+            "Super Rare": "https://info.oupi.eu/wp-content/uploads/2025/07/super-rare-lorcana.png.webp",
+            "Légendaire": "https://info.oupi.eu/wp-content/uploads/2025/07/legendaire-lorcana.png.webp",
+            "Enchantée": "https://info.oupi.eu/wp-content/uploads/2025/07/enchantee-lorcana.png.webp",
+            "Épique": "https://info.oupi.eu/wp-content/uploads/2025/07/epic-lorcana.png.webp",
+            "Iconique": "https://info.oupi.eu/wp-content/uploads/2025/07/iconic-lorcana.png.webp"
+        };
+
+        let chaptersData = {};
+        let selectedKey = null;
+
+        async function fetchSheetData() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                
+                chaptersData = data.chaptersData;
+                
+                const globalOwned = data.global.owned;
+                const globalMax = data.global.max;
+                const globalPercent = data.global.percent;
+
+                document.getElementById('global-fill').style.width = globalPercent + '%';
+                document.getElementById('global-numbers').innerText = `${globalOwned} / ${globalMax} cartes`;
+                document.getElementById('global-percent').innerText = globalPercent + '%';
+                document.getElementById('sync-status').innerText = "Dernière synchro Google Sheets : " + new Date().toLocaleTimeString();
+
+                initDashboard();
+            } catch (error) {
+                console.error("Erreur lors de la récupération des données :", error);
+                document.getElementById('sync-status').innerText = "⚠️ Erreur de connexion avec Google Sheets";
+            }
+        }
+
+        function initDashboard() {
+            if (!chaptersData || Object.keys(chaptersData).length === 0) return;
+
+            const yearsMap = { 1: [], 2: [], 3: [], 4: [] };
+            Object.keys(chaptersData).forEach(key => {
+                const chap = chaptersData[key];
+                if (chap && yearsMap[chap.year]) {
+                    yearsMap[chap.year].push(key);
+                }
+            });
+
+            Object.keys(yearsMap).forEach(yearNum => {
+                const container = document.getElementById(`year-${yearNum}-grid`);
+                if (!container) return;
+                container.innerHTML = '';
+
+                yearsMap[yearNum].forEach(key => {
+                    const chap = chaptersData[key];
+                    if (!chap) return;
+
+                    const percent = chap.released && chap.max > 0 ? ((chap.owned / chap.max) * 100).toFixed(0) : 0;
+                    const isSelected = selectedKey === key;
+                    const isCompleted = chap.released && chap.owned >= chap.max && chap.max > 0;
+
+                    const card = document.createElement('div');
+                    card.className = `chapter-card ${isSelected ? 'selected' : ''} ${isCompleted ? 'completed-100' : ''} ${!chap.released ? 'tba' : ''}`;
+                    card.onclick = () => selectChapter(key);
+
+                    if (chap.released) {
+                        card.innerHTML = `
+                            <div class="chapter-name">${key} ${isCompleted ? '✨' : ''}</div>
+                            <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
+                            <div class="chapter-bar-container">
+                                <div class="chapter-bar-fill" style="width: ${percent}%;"></div>
+                            </div>
+                            <div class="chapter-stats">${chap.owned}/${chap.max} (${percent}%)</div>
+                        `;
+                    } else {
+                        card.innerHTML = `
+                            <div class="chapter-name">${key}</div>
+                            <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
+                            <div class="chapter-bar-container">
+                                <div class="chapter-bar-fill" style="width: 0%;"></div>
+                            </div>
+                            <div class="chapter-stats" style="color: var(--text-muted);">À venir (TBA)</div>
+                        `;
+                    }
+                    container.appendChild(card);
+                });
+            });
+
+            renderRarities();
+        }
+
+        function selectChapter(key) {
+            selectedKey = (selectedKey === key) ? null : key;
+            initDashboard();
+        }
+
+        function resetSelection() {
+            selectedKey = null;
+            initDashboard();
+        }
+
+        function renderRarities() {
+            const container = document.getElementById('rarities-container');
+            const title = document.getElementById('rarities-title');
+            const resetHint = document.getElementById('reset-hint');
+            const detailsIcon = document.getElementById('details-icon');
+            container.innerHTML = '';
+
+            const row1Names = ["Commune", "Peu Commune", "Rare", "Super Rare", "Légendaire"];
+            const row2Names = ["Enchantée", "Épique", "Iconique"];
+
+            if (!selectedKey) {
+                title.innerText = "Récapitulatif Global par Rareté (Tous chapitres sortis cumulés)";
+                resetHint.style.display = 'none';
+                detailsIcon.style.display = 'none';
+
+                const computedGlobalRarities = {};
+                Object.values(chaptersData).forEach(chap => {
+                    if (chap.released && chap.rarities) {
+                        Object.keys(chap.rarities).forEach(rName => {
+                            const parts = chap.rarities[rName].split('/');
+                            const owned = parseInt(parts[0]) || 0;
+                            const total = parseInt(parts[1]) || 0;
+                            if (total > 0) {
+                                if (!computedGlobalRarities[rName]) {
+                                    computedGlobalRarities[rName] = { owned: 0, total: 0 };
+                                }
+                                computedGlobalRarities[rName].owned += owned;
+                                computedGlobalRarities[rName].total += total;
+                            }
+                        });
+                    }
+                });
+
+                const globalRaritiesFormatted = {};
+                Object.keys(computedGlobalRarities).forEach(rName => {
+                    globalRaritiesFormatted[rName] = `${computedGlobalRarities[rName].owned} / ${computedGlobalRarities[rName].total}`;
+                });
+
+                buildTwoRowsGrid(container, globalRaritiesFormatted, row1Names, row2Names);
+            } else {
+                const chap = chaptersData[selectedKey];
+                if (!chap.released) {
+                    title.innerText = `Détail des Raretés : ${chap.name} (À venir)`;
+                    resetHint.style.display = 'block';
+                    detailsIcon.src = chap.icon;
+                    detailsIcon.style.display = 'block';
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 15px; font-style: italic; font-family: 'Cinzel', serif;">Ce chapitre n'est pas encore sorti. Aucune statistique de rareté disponible.</div>`;
+                    return;
+                }
+
+                title.innerText = `Détail des Raretés : ${chap.name}`;
+                resetHint.style.display = 'block';
+                detailsIcon.src = chap.icon;
+                detailsIcon.style.display = 'block';
+
+                buildTwoRowsGrid(container, chap.rarities, row1Names, row2Names);
+            }
+        }
+
+        function buildTwoRowsGrid(container, dataObj, row1Keys, row2Keys) {
+            const row1 = document.createElement('div');
+            row1.className = 'rarities-row-flex';
+            row1Keys.forEach(name => {
+                if (dataObj && dataObj[name]) {
+                    const parts = dataObj[name].split('/');
+                    const totalVal = parts.length > 1 ? parseInt(parts[1].trim()) : 1;
+                    if (totalVal > 0) {
+                        const iconUrl = rarityIcons[name] || '';
+                        row1.innerHTML += `
+                            <div class="rarity-card">
+                                ${iconUrl ? `<img src="${iconUrl}" class="rarity-icon" alt="${name}">` : ''}
+                                <div class="rarity-name">${name}</div>
+                                <div class="rarity-value">${dataObj[name]}</div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            const row2 = document.createElement('div');
+            row2.className = 'rarities-row-flex';
+            row2Keys.forEach(name => {
+                if (dataObj && dataObj[name]) {
+                    const parts = dataObj[name].split('/');
+                    const totalVal = parts.length > 1 ? parseInt(parts[1].trim()) : 1;
+                    if (totalVal > 0) {
+                        const iconUrl = rarityIcons[name] || '';
+                        row2.innerHTML += `
+                            <div class="rarity-card">
+                                ${iconUrl ? `<img src="${iconUrl}" class="rarity-icon" alt="${name}">` : ''}
+                                <div class="rarity-name">${name}</div>
+                                <div class="rarity-value">${dataObj[name]}</div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            if (row1.children.length > 0) container.appendChild(row1);
+            if (row2.children.length > 0) container.appendChild(row2);
+        }
+
+        window.onload = fetchSheetData;
+    </script>
+</body>
+</html>
