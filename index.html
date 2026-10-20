@@ -99,7 +99,6 @@
             margin: 15px auto 10px auto;
         }
 
-        /* La jauge de contenu est maintenant en arrière-plan (z-index inférieur) */
         .custom-gauge-content-container {
             position: absolute;
             top: 36%;
@@ -121,7 +120,6 @@
             transition: width 1s ease-in-out;
         }
 
-        /* Le cadre PNG est maintenant au premier plan (z-index supérieur) pour masquer les débordements avec sa transparence */
         .custom-gauge-border {
             position: relative;
             width: 100%;
@@ -262,7 +260,10 @@
 
         .chapter-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #1b3db7, var(--gold));
+            width: 0%;
+            background-image: url('https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/jauge_content.png');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
             border-radius: 10px;
             transition: width 0.8s ease;
         }
@@ -451,13 +452,10 @@
         <div class="global-progress-box">
             <div class="section-title">Progression Globale de la Collection</div>
             <div class="custom-gauge-wrapper">
-                <!-- Contenu de la jauge en arrière-plan (masqué par les bords transparents de la bordure) -->
                 <div class="custom-gauge-content-container">
                     <div id="global-fill" class="custom-gauge-fill" style="width: 0%;"></div>
                 </div>
-                <!-- Cadre PNG au premier plan -->
                 <img src="https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/jauge_border.png" class="custom-gauge-border" alt="Cadre de jauge">
-                <!-- Badge du pourcentage au centre -->
                 <div id="global-percent" class="custom-gauge-badge">0%</div>
             </div>
             <div class="progress-text"><span id="global-numbers">Chargement...</span></div>
@@ -569,4 +567,82 @@
         function initDashboard() {
             if (!chaptersData || Object.keys(chaptersData).length === 0) return;
 
-            const yearsMap = { 1:
+            const yearsMap = { 1: [], 2: [], 3: [], 4: [] };
+            Object.keys(chaptersData).forEach(key => {
+                const chap = chaptersData[key];
+                if (chap && yearsMap[chap.year]) {
+                    yearsMap[chap.year].push(key);
+                }
+            });
+
+            Object.keys(yearsMap).forEach(yearNum => {
+                const container = document.getElementById(`year-${yearNum}-grid`);
+                if (!container) return;
+                container.innerHTML = '';
+
+                yearsMap[yearNum].forEach(key => {
+                    const chap = chaptersData[key];
+                    if (!chap) return;
+
+                    const percent = chap.released && chap.max > 0 ? ((chap.owned / chap.max) * 100).toFixed(0) : 0;
+                    const isSelected = selectedKey === key;
+                    const isCompleted = chap.released && chap.owned >= chap.max && chap.max > 0;
+
+                    const card = document.createElement('div');
+                    card.className = `chapter-card ${isSelected ? 'selected' : ''} ${isCompleted ? 'completed-100' : ''} ${!chap.released ? 'tba' : ''}`;
+                    card.onclick = () => selectChapter(key);
+
+                    if (chap.released) {
+                        card.innerHTML = `
+                            <div class="chapter-name">${key} ${isCompleted ? '✨' : ''}</div>
+                            <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
+                            <div class="chapter-bar-container">
+                                <div class="chapter-bar-fill" style="width: ${percent}%;"></div>
+                            </div>
+                            <div class="chapter-stats">${chap.owned}/${chap.max} (${percent}%)</div>
+                        `;
+                    } else {
+                        card.innerHTML = `
+                            <div class="chapter-name">${key}</div>
+                            <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
+                            <div class="chapter-bar-container">
+                                <div class="chapter-bar-fill" style="width: 0%;"></div>
+                            </div>
+                            <div class="chapter-stats" style="color: var(--text-muted);">À venir (TBA)</div>
+                        `;
+                    }
+                    container.appendChild(card);
+                });
+            });
+
+            renderRarities();
+        }
+
+        function selectChapter(key) {
+            selectedKey = (selectedKey === key) ? null : key;
+            initDashboard();
+        }
+
+        function resetSelection() {
+            selectedKey = null;
+            initDashboard();
+        }
+
+        function renderRarities() {
+            const container = document.getElementById('rarities-container');
+            const title = document.getElementById('rarities-title');
+            const resetHint = document.getElementById('reset-hint');
+            const detailsIcon = document.getElementById('details-icon');
+            container.innerHTML = '';
+
+            const row1Names = ["Commune", "Peu Commune", "Rare", "Super Rare", "Légendaire"];
+            const row2Names = ["Enchantée", "Épique", "Iconique"];
+
+            if (!selectedKey) {
+                title.innerText = "Récapitulatif Global par Rareté (Tous chapitres sortis cumulés)";
+                resetHint.style.display = 'none';
+                detailsIcon.style.display = 'none';
+
+                const computedGlobalRarities = {};
+                Object.values(chaptersData).forEach(chap => {
+                    if (chap.released && chap.rarities) {
