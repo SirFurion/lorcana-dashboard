@@ -104,7 +104,7 @@
             color: var(--text-main);
         }
 
-        /* Années et Chapitres (Centrés) */
+        /* Années et Chapitres */
         .year-section {
             margin-bottom: 20px;
             background: rgba(10, 15, 26, 0.6);
@@ -158,7 +158,6 @@
             background: linear-gradient(135deg, rgba(35, 50, 85, 0.9), rgba(15, 23, 42, 0.9));
         }
 
-        /* Effet visuel 100% complété */
         .chapter-card.completed-100 {
             border-color: var(--gold);
             box-shadow: 0 0 12px rgba(243, 206, 120, 0.4);
@@ -169,7 +168,6 @@
             box-shadow: 0 0 20px rgba(243, 206, 120, 0.9);
         }
 
-        /* Style spécifique Chapitre To Be Released */
         .chapter-card.tba {
             opacity: 0.65;
             border-style: dashed;
@@ -190,7 +188,6 @@
             justify-content: center;
         }
 
-        /* Correction stricte de la taille des images dans les cartes */
         .chapter-icon {
             width: 100%;
             max-width: 85px;
@@ -253,7 +250,6 @@
             display: none;
         }
 
-        /* Organisation sur 2 lignes pour les raretés */
         .rarities-grid {
             display: flex;
             flex-direction: column;
@@ -309,6 +305,129 @@
             margin-top: 12px;
             cursor: pointer;
             text-decoration: underline;
+        }
+
+        /* SECTION : Quête des Illumineurs (Sans jauges, avec badges) */
+        .quests-box {
+            background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(10,15,26,0.95));
+            border: 2px solid var(--gold-dark);
+            border-radius: 12px;
+            padding: 20px 18px;
+            margin-top: 25px;
+        }
+
+        .quests-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(243, 206, 120, 0.2);
+            padding-bottom: 12px;
+        }
+
+        .quests-header-icon {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 8px rgba(243, 206, 120, 0.6));
+        }
+
+        .quests-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .quest-card {
+            background: rgba(10, 15, 26, 0.85);
+            border: 2px solid rgba(243, 206, 120, 0.25);
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            min-width: 250px;
+            max-width: 290px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quest-card:hover {
+            transform: translateY(-4px);
+        }
+
+        /* Effet visuel "Possédé" */
+        .quest-card.owned {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, rgba(45, 36, 12, 0.9), rgba(13, 19, 33, 0.95));
+            box-shadow: 0 0 22px rgba(243, 206, 120, 0.5), inset 0 0 15px rgba(243, 206, 120, 0.15);
+        }
+
+        .quest-card.not-owned {
+            opacity: 0.6;
+            filter: grayscale(40%);
+            border-style: dashed;
+        }
+
+        .quest-image {
+            width: 100%;
+            height: 125px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid rgba(243, 206, 120, 0.3);
+            margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+            transition: all 0.3s ease;
+        }
+
+        .quest-card.owned .quest-image {
+            border-color: var(--gold);
+            box-shadow: 0 0 12px rgba(243, 206, 120, 0.4);
+        }
+
+        .quest-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--gold-light);
+            margin-bottom: 10px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.25;
+        }
+
+        .quest-status-badge {
+            font-family: 'Cinzel', serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            margin-top: 4px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .quest-card.owned .quest-status-badge {
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            color: #090d16;
+            box-shadow: 0 0 10px rgba(243, 206, 120, 0.6);
+            text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+        }
+
+        .quest-card.not-owned .quest-status-badge {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-muted);
+            border: 1px solid rgba(255,255,255,0.15);
         }
 
         .sync-status {
@@ -368,6 +487,15 @@
             <div class="reset-hint" id="reset-hint" style="display: none;" onclick="resetSelection()">🔄 Revenir au récapitulatif global</div>
         </div>
 
+        <!-- RUBRIQUE : Quête des Illumineurs -->
+        <div class="quests-box">
+            <div class="quests-header">
+                <img src="https://api.lorcana.ravensburger.com/images/fr/quest3/thumbnails/f1b6a5dfb5510f8fa4a89977e46715a2af94bfaeca5abcd4b444eb9804781fc4.png" class="quests-header-icon" alt="Quête des Illumineurs">
+                <div class="section-title" style="margin-bottom: 0;">Quête des Illumineurs</div>
+            </div>
+            <div class="quests-grid" id="quests-container"></div>
+        </div>
+
         <div class="sync-status" id="sync-status">Synchronisation avec Google Sheets en cours...</div>
     </div>
 
@@ -385,7 +513,30 @@
             "Iconique": "https://info.oupi.eu/wp-content/uploads/2025/07/iconic-lorcana.png.webp"
         };
 
+        // Configuration par défaut des 3 produits "Quête des Illumineurs"
+        const defaultQuests = [
+            {
+                id: "honey_rescue",
+                title: "Équipe miel à la rescousse",
+                image: "https://ravensburger.cloud/cms/gallery/lorcana-web/products/iq3-great-hunny-rescue/iq3-product/fr_4rgecedmd4_1920x1080.png",
+                owned: true
+            },
+            {
+                id: "palace_heist",
+                title: "Vol au palais",
+                image: "https://ravensburger.cloud/cms/gallery/lorcana-web/products/jafar/iq2/dlc_iq2_product-shot_fr.png",
+                owned: true
+            },
+            {
+                id: "deep_threat",
+                title: "Menace des profondeurs",
+                image: "https://ravensburger.cloud/cms/gallery/lorcana-web/products/dt/fr_9qtnfq4muo.png",
+                owned: true
+            }
+        ];
+
         let chaptersData = {};
+        let questsData = [];
         let selectedKey = null;
 
         async function fetchSheetData() {
@@ -393,11 +544,18 @@
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
                 
-                chaptersData = data.chaptersData;
+                chaptersData = data.chaptersData || {};
                 
-                const globalOwned = data.global.owned;
-                const globalMax = data.global.max;
-                const globalPercent = data.global.percent;
+                // Récupération dynamique depuis Google Sheets si disponible, sinon repli sur defaultQuests
+                if (data.questsData && Array.isArray(data.questsData) && data.questsData.length > 0) {
+                    questsData = data.questsData;
+                } else {
+                    questsData = defaultQuests;
+                }
+                
+                const globalOwned = data.global ? data.global.owned : 0;
+                const globalMax = data.global ? data.global.max : 0;
+                const globalPercent = data.global ? data.global.percent : 0;
 
                 document.getElementById('global-fill').style.width = globalPercent + '%';
                 document.getElementById('global-numbers').innerText = `${globalOwned} / ${globalMax} cartes`;
@@ -408,61 +566,65 @@
             } catch (error) {
                 console.error("Erreur lors de la récupération des données :", error);
                 document.getElementById('sync-status').innerText = "⚠️ Erreur de connexion avec Google Sheets";
+                questsData = defaultQuests;
+                renderQuests();
             }
         }
 
         function initDashboard() {
-            if (!chaptersData || Object.keys(chaptersData).length === 0) return;
-
-            const yearsMap = { 1: [], 2: [], 3: [], 4: [] };
-            Object.keys(chaptersData).forEach(key => {
-                const chap = chaptersData[key];
-                if (chap && yearsMap[chap.year]) {
-                    yearsMap[chap.year].push(key);
-                }
-            });
-
-            Object.keys(yearsMap).forEach(yearNum => {
-                const container = document.getElementById(`year-${yearNum}-grid`);
-                if (!container) return;
-                container.innerHTML = '';
-
-                yearsMap[yearNum].forEach(key => {
+            if (chaptersData && Object.keys(chaptersData).length > 0) {
+                const yearsMap = { 1: [], 2: [], 3: [], 4: [] };
+                Object.keys(chaptersData).forEach(key => {
                     const chap = chaptersData[key];
-                    if (!chap) return;
-
-                    const percent = chap.released && chap.max > 0 ? ((chap.owned / chap.max) * 100).toFixed(0) : 0;
-                    const isSelected = selectedKey === key;
-                    const isCompleted = chap.released && chap.owned >= chap.max && chap.max > 0;
-
-                    const card = document.createElement('div');
-                    card.className = `chapter-card ${isSelected ? 'selected' : ''} ${isCompleted ? 'completed-100' : ''} ${!chap.released ? 'tba' : ''}`;
-                    card.onclick = () => selectChapter(key);
-
-                    if (chap.released) {
-                        card.innerHTML = `
-                            <div class="chapter-name">${key} ${isCompleted ? '✨' : ''}</div>
-                            <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
-                            <div class="chapter-bar-container">
-                                <div class="chapter-bar-fill" style="width: ${percent}%;"></div>
-                            </div>
-                            <div class="chapter-stats">${chap.owned}/${chap.max} (${percent}%)</div>
-                        `;
-                    } else {
-                        card.innerHTML = `
-                            <div class="chapter-name">${key}</div>
-                            <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
-                            <div class="chapter-bar-container">
-                                <div class="chapter-bar-fill" style="width: 0%;"></div>
-                            </div>
-                            <div class="chapter-stats" style="color: var(--text-muted);">À venir (TBA)</div>
-                        `;
+                    if (chap && yearsMap[chap.year]) {
+                        yearsMap[chap.year].push(key);
                     }
-                    container.appendChild(card);
                 });
-            });
 
-            renderRarities();
+                Object.keys(yearsMap).forEach(yearNum => {
+                    const container = document.getElementById(`year-${yearNum}-grid`);
+                    if (!container) return;
+                    container.innerHTML = '';
+
+                    yearsMap[yearNum].forEach(key => {
+                        const chap = chaptersData[key];
+                        if (!chap) return;
+
+                        const percent = chap.released && chap.max > 0 ? ((chap.owned / chap.max) * 100).toFixed(0) : 0;
+                        const isSelected = selectedKey === key;
+                        const isCompleted = chap.released && chap.owned >= chap.max && chap.max > 0;
+
+                        const card = document.createElement('div');
+                        card.className = `chapter-card ${isSelected ? 'selected' : ''} ${isCompleted ? 'completed-100' : ''} ${!chap.released ? 'tba' : ''}`;
+                        card.onclick = () => selectChapter(key);
+
+                        if (chap.released) {
+                            card.innerHTML = `
+                                <div class="chapter-name">${key} ${isCompleted ? '✨' : ''}</div>
+                                <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
+                                <div class="chapter-bar-container">
+                                    <div class="chapter-bar-fill" style="width: ${percent}%;"></div>
+                                </div>
+                                <div class="chapter-stats">${chap.owned}/${chap.max} (${percent}%)</div>
+                            `;
+                        } else {
+                            card.innerHTML = `
+                                <div class="chapter-name">${key}</div>
+                                <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
+                                <div class="chapter-bar-container">
+                                    <div class="chapter-bar-fill" style="width: 0%;"></div>
+                                </div>
+                                <div class="chapter-stats" style="color: var(--text-muted);">À venir (TBA)</div>
+                            `;
+                        }
+                        container.appendChild(card);
+                    });
+                });
+
+                renderRarities();
+            }
+
+            renderQuests();
         }
 
         function selectChapter(key) {
@@ -577,7 +739,33 @@
             if (row2.children.length > 0) container.appendChild(row2);
         }
 
+        // Rendu des Quêtes des Illumineurs sous forme de Badges de Possession (sans jauges)
+        function renderQuests() {
+            const container = document.getElementById('quests-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            questsData.forEach(quest => {
+                // Supporte aussi bien un booléen true/false qu'un nombre (1/0 ou 100/100)
+                const isOwned = (typeof quest.owned === 'boolean') 
+                    ? quest.owned 
+                    : (quest.owned === 1 || quest.owned === true || quest.owned >= (quest.max || 1));
+
+                const card = document.createElement('div');
+                card.className = `quest-card ${isOwned ? 'owned' : 'not-owned'}`;
+                card.innerHTML = `
+                    <img src="${quest.image}" class="quest-image" alt="${quest.title}" onerror="this.src='https://placehold.co/300x160/0a0f1a/f3ce78?text=Lorcana+Quest'">
+                    <div class="quest-title">${quest.title}</div>
+                    <div class="quest-status-badge">
+                        ${isOwned ? 'En Collection ✨' : 'Non Possédé'}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
         window.onload = fetchSheetData;
     </script>
 </body>
 </html>
+```
