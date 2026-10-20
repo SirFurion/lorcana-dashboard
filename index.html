@@ -384,6 +384,7 @@
             "Iconique": "https://info.oupi.eu/wp-content/uploads/2025/07/iconic-lorcana.png.webp"
         };
 
+        // Déclaration globale propre des données
         let chaptersData = {};
         let selectedKey = null;
 
@@ -394,7 +395,7 @@
                 
                 chaptersData = data.chaptersData;
                 
-                // Met à jour la jauge globale avec les données dynamiques du Sheet
+                // Met à jour la jauge globale
                 const globalOwned = data.global.owned;
                 const globalMax = data.global.max;
                 const globalPercent = data.global.percent;
@@ -412,11 +413,12 @@
         }
 
         function initDashboard() {
-            // Regrouper les chapitres par année dynamiquement d'après les données du script
+            if (!chaptersData || Object.keys(chaptersData).length === 0) return;
+
             const yearsMap = { 1: [], 2: [], 3: [], 4: [] };
             Object.keys(chaptersData).forEach(key => {
                 const chap = chaptersData[key];
-               if (chap && yearsMap[chap.year]) {
+                if (chap && yearsMap[chap.year]) {
                     yearsMap[chap.year].push(key);
                 }
             });
@@ -441,7 +443,7 @@
                     if (chap.released) {
                         card.innerHTML = `
                             <div class="chapter-name">${key} ${isCompleted ? '✨' : ''}</div>
-                            <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
+                            <img src="${chap.icon}" class="icon" alt="${key}" onerror="this.style.display='none'">
                             <div class="chapter-bar-container">
                                 <div class="chapter-bar-fill" style="width: ${percent}%;"></div>
                             </div>
@@ -450,7 +452,7 @@
                     } else {
                         card.innerHTML = `
                             <div class="chapter-name">${key}</div>
-                            <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
+                            <img src="${chap.icon}" class="icon" alt="${key}" onerror="this.style.display='none'">
                             <div class="chapter-bar-container">
                                 <div class="chapter-bar-fill" style="width: 0%;"></div>
                             </div>
@@ -516,4 +518,68 @@
             } else {
                 const chap = chaptersData[selectedKey];
                 if (!chap.released) {
-                    title
+                    title.innerText = `Détail des Raretés : ${chap.name} (À venir)`;
+                    resetHint.style.display = 'block';
+                    detailsIcon.src = chap.icon;
+                    detailsIcon.style.display = 'block';
+                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 15px; font-style: italic; font-family: 'Cinzel', serif;">Ce chapitre n'est pas encore sorti. Aucune statistique de rareté disponible.</div>`;
+                    return;
+                }
+
+                title.innerText = `Détail des Raretés : ${chap.name}`;
+                resetHint.style.display = 'block';
+                detailsIcon.src = chap.icon;
+                detailsIcon.style.display = 'block';
+
+                buildTwoRowsGrid(container, chap.rarities, row1Names, row2Names);
+            }
+        }
+
+        function buildTwoRowsGrid(container, dataObj, row1Keys, row2Keys) {
+            const row1 = document.createElement('div');
+            row1.className = 'rarities-row-flex';
+            row1Keys.forEach(name => {
+                if (dataObj && dataObj[name]) {
+                    const parts = dataObj[name].split('/');
+                    const totalVal = parts.length > 1 ? parseInt(parts[1].trim()) : 1;
+                    if (totalVal > 0) {
+                        const iconUrl = rarityIcons[name] || '';
+                        row1.innerHTML += `
+                            <div class="rarity-card">
+                                ${iconUrl ? `<img src="${iconUrl}" class="rarity-icon" alt="${name}">` : ''}
+                                <div class="rarity-name">${name}</div>
+                                <div class="rarity-value">${dataObj[name]}</div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            const row2 = document.createElement('div');
+            row2.className = 'rarities-row-flex';
+            row2Keys.forEach(name => {
+                if (dataObj && dataObj[name]) {
+                    const parts = dataObj[name].split('/');
+                    const totalVal = parts.length > 1 ? parseInt(parts[1].trim()) : 1;
+                    if (totalVal > 0) {
+                        const iconUrl = rarityIcons[name] || '';
+                        row2.innerHTML += `
+                            <div class="rarity-card">
+                                ${iconUrl ? `<img src="${iconUrl}" class="rarity-icon" alt="${name}">` : ''}
+                                <div class="rarity-name">${name}</div>
+                                <div class="rarity-value">${dataObj[name]}</div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            if (row1.children.length > 0) container.appendChild(row1);
+            if (row2.children.length > 0) container.appendChild(row2);
+        }
+
+        // Lancement au chargement de la page
+        window.onload = fetchSheetData;
+    </script>
+</body>
+</html>
