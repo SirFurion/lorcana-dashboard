@@ -47,16 +47,29 @@
             margin-bottom: 25px;
             border-bottom: 2px solid rgba(243, 206, 120, 0.3);
             padding-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .game-title {
+        .main-logo {
+            max-width: 280px;
+            width: 80%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 0 15px rgba(243, 206, 120, 0.5));
+            margin-bottom: 6px;
+        }
+
+        .sub-header-title {
             font-family: 'Cinzel', serif;
-            font-size: clamp(1.2rem, 3.5vw, 1.8rem);
-            font-weight: 900;
-            color: var(--gold);
+            font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+            font-weight: 700;
+            color: var(--gold-light);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            letter-spacing: 4px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.9);
         }
 
         .section-title {
@@ -104,7 +117,7 @@
             color: var(--text-main);
         }
 
-        /* Années et Chapitres */
+        /* Années et Chapitres (Centrés) */
         .year-section {
             margin-bottom: 20px;
             background: rgba(10, 15, 26, 0.6);
@@ -158,6 +171,7 @@
             background: linear-gradient(135deg, rgba(35, 50, 85, 0.9), rgba(15, 23, 42, 0.9));
         }
 
+        /* Effet visuel 100% complété */
         .chapter-card.completed-100 {
             border-color: var(--gold);
             box-shadow: 0 0 12px rgba(243, 206, 120, 0.4);
@@ -168,6 +182,7 @@
             box-shadow: 0 0 20px rgba(243, 206, 120, 0.9);
         }
 
+        /* Style spécifique Chapitre To Be Released */
         .chapter-card.tba {
             opacity: 0.65;
             border-style: dashed;
@@ -250,6 +265,7 @@
             display: none;
         }
 
+        /* Organisation sur 2 lignes pour les raretés */
         .rarities-grid {
             display: flex;
             flex-direction: column;
@@ -307,127 +323,83 @@
             text-decoration: underline;
         }
 
-        /* SECTION : Quête des Illumineurs (Sans jauges, avec badges) */
-        .quests-box {
+        /* Section Quête des Illumineurs */
+        .quest-box {
             background: linear-gradient(135deg, rgba(15,23,42,0.9), rgba(10,15,26,0.95));
             border: 2px solid var(--gold-dark);
             border-radius: 12px;
-            padding: 20px 18px;
+            padding: 18px;
             margin-top: 25px;
         }
 
-        .quests-header {
+        .quest-cards-row {
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 12px;
-            margin-bottom: 18px;
-            border-bottom: 1px solid rgba(243, 206, 120, 0.2);
-            padding-bottom: 12px;
-        }
-
-        .quests-header-icon {
-            width: 42px;
-            height: 42px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 8px rgba(243, 206, 120, 0.6));
-        }
-
-        .quests-grid {
-            display: flex;
+            gap: 15px;
             flex-wrap: wrap;
-            justify-content: center;
-            gap: 16px;
+            margin-top: 15px;
         }
 
         .quest-card {
-            background: rgba(10, 15, 26, 0.85);
+            background: rgba(5, 8, 17, 0.8);
             border: 2px solid rgba(243, 206, 120, 0.25);
-            border-radius: 12px;
-            padding: 14px;
+            border-radius: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             flex: 1;
-            min-width: 250px;
-            max-width: 290px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            min-width: 180px;
+            max-width: 240px;
             position: relative;
-            overflow: hidden;
+            transition: all 0.3s ease;
         }
 
-        .quest-card:hover {
-            transform: translateY(-4px);
-        }
-
-        /* Effet visuel "Possédé" */
         .quest-card.owned {
             border-color: var(--gold);
-            background: linear-gradient(135deg, rgba(45, 36, 12, 0.9), rgba(13, 19, 33, 0.95));
-            box-shadow: 0 0 22px rgba(243, 206, 120, 0.5), inset 0 0 15px rgba(243, 206, 120, 0.15);
+            background: linear-gradient(135deg, rgba(45, 38, 15, 0.85), rgba(15, 23, 42, 0.95));
+            box-shadow: 0 0 15px rgba(243, 206, 120, 0.4);
         }
 
-        .quest-card.not-owned {
-            opacity: 0.6;
-            filter: grayscale(40%);
-            border-style: dashed;
-        }
-
-        .quest-image {
+        .quest-card-img {
             width: 100%;
-            height: 125px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid rgba(243, 206, 120, 0.3);
-            margin-bottom: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-            transition: all 0.3s ease;
+            height: 100px;
+            object-fit: contain;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.8));
         }
 
-        .quest-card.owned .quest-image {
-            border-color: var(--gold);
-            box-shadow: 0 0 12px rgba(243, 206, 120, 0.4);
-        }
-
-        .quest-title {
+        .quest-card-title {
             font-family: 'Cinzel', serif;
-            font-size: 0.88rem;
+            font-size: 0.8rem;
             font-weight: 700;
-            color: var(--gold-light);
-            margin-bottom: 10px;
-            height: 38px;
+            color: var(--text-main);
+            margin-bottom: 6px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            line-height: 1.25;
         }
 
         .quest-status-badge {
-            font-family: 'Cinzel', serif;
-            font-size: 0.78rem;
+            font-size: 0.72rem;
             font-weight: 700;
-            padding: 6px 14px;
+            padding: 4px 10px;
             border-radius: 20px;
-            letter-spacing: 0.5px;
             margin-top: 4px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
         }
 
-        .quest-card.owned .quest-status-badge {
-            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-            color: #090d16;
-            box-shadow: 0 0 10px rgba(243, 206, 120, 0.6);
-            text-shadow: 0 1px 0 rgba(255,255,255,0.4);
+        .quest-status-badge.status-owned {
+            background: rgba(243, 206, 120, 0.2);
+            color: var(--gold-light);
+            border: 1px solid var(--gold);
         }
 
-        .quest-card.not-owned .quest-status-badge {
-            background: rgba(255, 255, 255, 0.08);
+        .quest-status-badge.status-missing {
+            background: rgba(255, 255, 255, 0.05);
             color: var(--text-muted);
-            border: 1px solid rgba(255,255,255,0.15);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sync-status {
@@ -442,7 +414,8 @@
 
     <div class="scroll-container">
         <header>
-            <div class="game-title">✦ Disney Lorcana — Dashboard ✦</div>
+            <img src="https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/Disney-_Lorcana_-_Logo.png" alt="Disney Lorcana Logo" class="main-logo">
+            <div class="sub-header-title">Dashboard</div>
         </header>
 
         <!-- Jauge Globale -->
@@ -455,317 +428,4 @@
         </div>
 
         <!-- Années et Chapitres -->
-        <div class="section-title">Suivi par Année & Chapitres (Clique sur un chapitre)</div>
-        
-        <div class="year-section">
-            <div class="year-title">Année 1</div>
-            <div class="chapters-row" id="year-1-grid"></div>
-        </div>
-
-        <div class="year-section">
-            <div class="year-title">Année 2</div>
-            <div class="chapters-row" id="year-2-grid"></div>
-        </div>
-
-        <div class="year-section">
-            <div class="year-title">Année 3</div>
-            <div class="chapters-row" id="year-3-grid"></div>
-        </div>
-
-        <div class="year-section">
-            <div class="year-title">Année 4</div>
-            <div class="chapters-row" id="year-4-grid"></div>
-        </div>
-
-        <!-- Détails Raretés & Grand Visuel -->
-        <div class="rarities-box">
-            <div class="details-header">
-                <img id="details-icon" class="details-large-icon" alt="Logo Chapitre">
-                <div class="section-title" id="rarities-title" style="margin-bottom: 0;">Récapitulatif Global par Rareté (Tous chapitres sortis cumulés)</div>
-            </div>
-            <div class="rarities-grid" id="rarities-container"></div>
-            <div class="reset-hint" id="reset-hint" style="display: none;" onclick="resetSelection()">🔄 Revenir au récapitulatif global</div>
-        </div>
-
-        <!-- RUBRIQUE : Quête des Illumineurs -->
-        <div class="quests-box">
-            <div class="quests-header">
-                <img src="https://api.lorcana.ravensburger.com/images/fr/quest3/thumbnails/f1b6a5dfb5510f8fa4a89977e46715a2af94bfaeca5abcd4b444eb9804781fc4.png" class="quests-header-icon" alt="Quête des Illumineurs">
-                <div class="section-title" style="margin-bottom: 0;">Quête des Illumineurs</div>
-            </div>
-            <div class="quests-grid" id="quests-container"></div>
-        </div>
-
-        <div class="sync-status" id="sync-status">Synchronisation avec Google Sheets en cours...</div>
-    </div>
-
-    <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwiuvrw08ikKod2F6caNTy2tjrKEGySGHdIl_-dxksPRk8hmU4tX3O7suF3Y6NKU4oz/exec";
-
-        const rarityIcons = {
-            "Commune": "https://info.oupi.eu/wp-content/uploads/2025/07/commune-lorcana.png.webp",
-            "Peu Commune": "https://info.oupi.eu/wp-content/uploads/2025/07/unco-lorcana.png.webp",
-            "Rare": "https://info.oupi.eu/wp-content/uploads/2025/07/rare-lorcana.png.webp",
-            "Super Rare": "https://info.oupi.eu/wp-content/uploads/2025/07/super-rare-lorcana.png.webp",
-            "Légendaire": "https://info.oupi.eu/wp-content/uploads/2025/07/legendaire-lorcana.png.webp",
-            "Enchantée": "https://info.oupi.eu/wp-content/uploads/2025/07/enchantee-lorcana.png.webp",
-            "Épique": "https://info.oupi.eu/wp-content/uploads/2025/07/epic-lorcana.png.webp",
-            "Iconique": "https://info.oupi.eu/wp-content/uploads/2025/07/iconic-lorcana.png.webp"
-        };
-
-        // Configuration par défaut des 3 produits "Quête des Illumineurs"
-        const defaultQuests = [
-            {
-                id: "deep_threat",
-                title: "Menace des profondeurs",
-                image: "https://ravensburger.cloud/cms/gallery/lorcana-web/products/dt/fr_9qtnfq4muo.png",
-                owned: true
-            },
-            {
-                id: "palace_heist",
-                title: "Vol au palais",
-                image: "https://ravensburger.cloud/cms/gallery/lorcana-web/products/jafar/iq2/dlc_iq2_product-shot_fr.png",
-                owned: true
-            },
-            {
-                id: "honey_rescue",
-                title: "Équipe miel à la rescousse",
-                image: "https://ravensburger.cloud/cms/gallery/lorcana-web/products/iq3-great-hunny-rescue/iq3-product/fr_4rgecedmd4_1920x1080.png",
-                owned: true
-            }
-        ];
-
-        let chaptersData = {};
-        let questsData = [];
-        let selectedKey = null;
-
-        async function fetchSheetData() {
-            try {
-                const response = await fetch(SCRIPT_URL);
-                const data = await response.json();
-                
-                chaptersData = data.chaptersData || {};
-                
-                // Récupération dynamique depuis Google Sheets si disponible, sinon repli sur defaultQuests
-                if (data.questsData && Array.isArray(data.questsData) && data.questsData.length > 0) {
-                    questsData = data.questsData;
-                } else {
-                    questsData = defaultQuests;
-                }
-                
-                const globalOwned = data.global ? data.global.owned : 0;
-                const globalMax = data.global ? data.global.max : 0;
-                const globalPercent = data.global ? data.global.percent : 0;
-
-                document.getElementById('global-fill').style.width = globalPercent + '%';
-                document.getElementById('global-numbers').innerText = `${globalOwned} / ${globalMax} cartes`;
-                document.getElementById('global-percent').innerText = globalPercent + '%';
-                document.getElementById('sync-status').innerText = "Dernière synchro Google Sheets : " + new Date().toLocaleTimeString();
-
-                initDashboard();
-            } catch (error) {
-                console.error("Erreur lors de la récupération des données :", error);
-                document.getElementById('sync-status').innerText = "⚠️ Erreur de connexion avec Google Sheets";
-                questsData = defaultQuests;
-                renderQuests();
-            }
-        }
-
-        function initDashboard() {
-            if (chaptersData && Object.keys(chaptersData).length > 0) {
-                const yearsMap = { 1: [], 2: [], 3: [], 4: [] };
-                Object.keys(chaptersData).forEach(key => {
-                    const chap = chaptersData[key];
-                    if (chap && yearsMap[chap.year]) {
-                        yearsMap[chap.year].push(key);
-                    }
-                });
-
-                Object.keys(yearsMap).forEach(yearNum => {
-                    const container = document.getElementById(`year-${yearNum}-grid`);
-                    if (!container) return;
-                    container.innerHTML = '';
-
-                    yearsMap[yearNum].forEach(key => {
-                        const chap = chaptersData[key];
-                        if (!chap) return;
-
-                        const percent = chap.released && chap.max > 0 ? ((chap.owned / chap.max) * 100).toFixed(0) : 0;
-                        const isSelected = selectedKey === key;
-                        const isCompleted = chap.released && chap.owned >= chap.max && chap.max > 0;
-
-                        const card = document.createElement('div');
-                        card.className = `chapter-card ${isSelected ? 'selected' : ''} ${isCompleted ? 'completed-100' : ''} ${!chap.released ? 'tba' : ''}`;
-                        card.onclick = () => selectChapter(key);
-
-                        if (chap.released) {
-                            card.innerHTML = `
-                                <div class="chapter-name">${key} ${isCompleted ? '✨' : ''}</div>
-                                <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
-                                <div class="chapter-bar-container">
-                                    <div class="chapter-bar-fill" style="width: ${percent}%;"></div>
-                                </div>
-                                <div class="chapter-stats">${chap.owned}/${chap.max} (${percent}%)</div>
-                            `;
-                        } else {
-                            card.innerHTML = `
-                                <div class="chapter-name">${key}</div>
-                                <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
-                                <div class="chapter-bar-container">
-                                    <div class="chapter-bar-fill" style="width: 0%;"></div>
-                                </div>
-                                <div class="chapter-stats" style="color: var(--text-muted);">À venir (TBA)</div>
-                            `;
-                        }
-                        container.appendChild(card);
-                    });
-                });
-
-                renderRarities();
-            }
-
-            renderQuests();
-        }
-
-        function selectChapter(key) {
-            selectedKey = (selectedKey === key) ? null : key;
-            initDashboard();
-        }
-
-        function resetSelection() {
-            selectedKey = null;
-            initDashboard();
-        }
-
-        function renderRarities() {
-            const container = document.getElementById('rarities-container');
-            const title = document.getElementById('rarities-title');
-            const resetHint = document.getElementById('reset-hint');
-            const detailsIcon = document.getElementById('details-icon');
-            container.innerHTML = '';
-
-            const row1Names = ["Commune", "Peu Commune", "Rare", "Super Rare", "Légendaire"];
-            const row2Names = ["Enchantée", "Épique", "Iconique"];
-
-            if (!selectedKey) {
-                title.innerText = "Récapitulatif Global par Rareté (Tous chapitres sortis cumulés)";
-                resetHint.style.display = 'none';
-                detailsIcon.style.display = 'none';
-
-                const computedGlobalRarities = {};
-                Object.values(chaptersData).forEach(chap => {
-                    if (chap.released && chap.rarities) {
-                        Object.keys(chap.rarities).forEach(rName => {
-                            const parts = chap.rarities[rName].split('/');
-                            const owned = parseInt(parts[0]) || 0;
-                            const total = parseInt(parts[1]) || 0;
-                            if (total > 0) {
-                                if (!computedGlobalRarities[rName]) {
-                                    computedGlobalRarities[rName] = { owned: 0, total: 0 };
-                                }
-                                computedGlobalRarities[rName].owned += owned;
-                                computedGlobalRarities[rName].total += total;
-                            }
-                        });
-                    }
-                });
-
-                const globalRaritiesFormatted = {};
-                Object.keys(computedGlobalRarities).forEach(rName => {
-                    globalRaritiesFormatted[rName] = `${computedGlobalRarities[rName].owned} / ${computedGlobalRarities[rName].total}`;
-                });
-
-                buildTwoRowsGrid(container, globalRaritiesFormatted, row1Names, row2Names);
-            } else {
-                const chap = chaptersData[selectedKey];
-                if (!chap.released) {
-                    title.innerText = `Détail des Raretés : ${chap.name} (À venir)`;
-                    resetHint.style.display = 'block';
-                    detailsIcon.src = chap.icon;
-                    detailsIcon.style.display = 'block';
-                    container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 15px; font-style: italic; font-family: 'Cinzel', serif;">Ce chapitre n'est pas encore sorti. Aucune statistique de rareté disponible.</div>`;
-                    return;
-                }
-
-                title.innerText = `Détail des Raretés : ${chap.name}`;
-                resetHint.style.display = 'block';
-                detailsIcon.src = chap.icon;
-                detailsIcon.style.display = 'block';
-
-                buildTwoRowsGrid(container, chap.rarities, row1Names, row2Names);
-            }
-        }
-
-        function buildTwoRowsGrid(container, dataObj, row1Keys, row2Keys) {
-            const row1 = document.createElement('div');
-            row1.className = 'rarities-row-flex';
-            row1Keys.forEach(name => {
-                if (dataObj && dataObj[name]) {
-                    const parts = dataObj[name].split('/');
-                    const totalVal = parts.length > 1 ? parseInt(parts[1].trim()) : 1;
-                    if (totalVal > 0) {
-                        const iconUrl = rarityIcons[name] || '';
-                        row1.innerHTML += `
-                            <div class="rarity-card">
-                                ${iconUrl ? `<img src="${iconUrl}" class="rarity-icon" alt="${name}">` : ''}
-                                <div class="rarity-name">${name}</div>
-                                <div class="rarity-value">${dataObj[name]}</div>
-                            </div>
-                        `;
-                    }
-                }
-            });
-
-            const row2 = document.createElement('div');
-            row2.className = 'rarities-row-flex';
-            row2Keys.forEach(name => {
-                if (dataObj && dataObj[name]) {
-                    const parts = dataObj[name].split('/');
-                    const totalVal = parts.length > 1 ? parseInt(parts[1].trim()) : 1;
-                    if (totalVal > 0) {
-                        const iconUrl = rarityIcons[name] || '';
-                        row2.innerHTML += `
-                            <div class="rarity-card">
-                                ${iconUrl ? `<img src="${iconUrl}" class="rarity-icon" alt="${name}">` : ''}
-                                <div class="rarity-name">${name}</div>
-                                <div class="rarity-value">${dataObj[name]}</div>
-                            </div>
-                        `;
-                    }
-                }
-            });
-
-            if (row1.children.length > 0) container.appendChild(row1);
-            if (row2.children.length > 0) container.appendChild(row2);
-        }
-
-        // Rendu des Quêtes des Illumineurs sous forme de Badges de Possession (sans jauges)
-        function renderQuests() {
-            const container = document.getElementById('quests-container');
-            if (!container) return;
-            container.innerHTML = '';
-
-            questsData.forEach(quest => {
-                // Supporte aussi bien un booléen true/false qu'un nombre (1/0 ou 100/100)
-                const isOwned = (typeof quest.owned === 'boolean') 
-                    ? quest.owned 
-                    : (quest.owned === 1 || quest.owned === true || quest.owned >= (quest.max || 1));
-
-                const card = document.createElement('div');
-                card.className = `quest-card ${isOwned ? 'owned' : 'not-owned'}`;
-                card.innerHTML = `
-                    <img src="${quest.image}" class="quest-image" alt="${quest.title}" onerror="this.src='https://placehold.co/300x160/0a0f1a/f3ce78?text=Lorcana+Quest'">
-                    <div class="quest-title">${quest.title}</div>
-                    <div class="quest-status-badge">
-                        ${isOwned ? 'En Collection ✨' : 'Non Possédé'}
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        window.onload = fetchSheetData;
-    </script>
-</body>
-</html>
-```
+        <div class="section-title">Suivi par Année &
