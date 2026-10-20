@@ -100,27 +100,22 @@
             margin: 15px auto 10px auto;
         }
 
-        .custom-gauge-content-container {
-            position: absolute;
-            top: 32%;
-            left: 3.5%;
-            width: 93%;
-            height: 36%;
-            overflow: hidden;
-            border-radius: 20px;
-            z-index: 1;
-        }
-
+        /* L'image de contenu s'étend en arrière-plan (z-index 1) avec le même ratio/taille */
         .custom-gauge-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
             height: 100%;
             width: 0%;
             background-image: url('https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/jauge_content.png');
             background-size: 100% 100%;
             background-repeat: no-repeat;
-            border-radius: 20px;
+            z-index: 1;
             transition: width 1s ease-in-out;
+            overflow: hidden;
         }
 
+        /* La bordure vient se superposer par-dessus (z-index 2) */
         .custom-gauge-border {
             position: absolute;
             top: 0;
@@ -454,9 +449,7 @@
         <div class="global-progress-box">
             <div class="section-title">Progression Globale de la Collection</div>
             <div class="custom-gauge-wrapper">
-                <div class="custom-gauge-content-container">
-                    <div id="global-fill" class="custom-gauge-fill" style="width: 0%;"></div>
-                </div>
+                <div id="global-fill" class="custom-gauge-fill" style="width: 0%;"></div>
                 <img src="https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/jauge_border.png" class="custom-gauge-border" alt="Cadre de jauge">
                 <div id="global-percent" class="custom-gauge-badge">0%</div>
             </div>
