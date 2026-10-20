@@ -81,7 +81,7 @@
             text-align: center;
         }
 
-        /* Bloc Jauge Globale Personnalisée */
+        /* Bloc Jauge Globale Personnalisée (Basé sur 480x62) */
         .global-progress-box {
             background: linear-gradient(135deg, rgba(23,35,63,0.9), rgba(10,15,26,0.95));
             border: 2px solid var(--gold-dark);
@@ -95,16 +95,17 @@
         .custom-gauge-wrapper {
             position: relative;
             width: 100%;
-            max-width: 600px;
+            max-width: 550px;
+            aspect-ratio: 480 / 62;
             margin: 15px auto 10px auto;
         }
 
         .custom-gauge-content-container {
             position: absolute;
-            top: 41%;
+            top: 32%;
             left: 3.5%;
             width: 93%;
-            height: 18%;
+            height: 36%;
             overflow: hidden;
             border-radius: 20px;
             z-index: 1;
@@ -121,10 +122,11 @@
         }
 
         .custom-gauge-border {
-            position: relative;
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: auto;
-            display: block;
+            height: 100%;
             z-index: 2;
             pointer-events: none;
             filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.8));
