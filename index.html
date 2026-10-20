@@ -190,12 +190,13 @@
             justify-content: center;
         }
 
+        /* Correction stricte de la taille des images dans les cartes */
         .chapter-icon {
             width: 100%;
-            max-width: 100px;
-            height: 55px;
+            max-width: 85px;
+            height: 42px;
             object-fit: contain;
-            margin: 0 0 6px 0;
+            margin: 4px 0 8px 0;
             filter: drop-shadow(0 2px 6px rgba(243, 206, 120, 0.4));
         }
 
@@ -245,8 +246,8 @@
         }
 
         .details-large-icon {
-            width: 90px;
-            height: 90px;
+            width: 75px;
+            height: 75px;
             object-fit: contain;
             filter: drop-shadow(0 0 12px rgba(243, 206, 120, 0.7));
             display: none;
@@ -283,8 +284,8 @@
         }
 
         .rarity-icon {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             object-fit: contain;
             filter: drop-shadow(0 1px 3px rgba(0,0,0,0.8));
         }
@@ -384,7 +385,6 @@
             "Iconique": "https://info.oupi.eu/wp-content/uploads/2025/07/iconic-lorcana.png.webp"
         };
 
-        // Déclaration globale propre des données
         let chaptersData = {};
         let selectedKey = null;
 
@@ -395,7 +395,6 @@
                 
                 chaptersData = data.chaptersData;
                 
-                // Met à jour la jauge globale
                 const globalOwned = data.global.owned;
                 const globalMax = data.global.max;
                 const globalPercent = data.global.percent;
@@ -443,7 +442,7 @@
                     if (chap.released) {
                         card.innerHTML = `
                             <div class="chapter-name">${key} ${isCompleted ? '✨' : ''}</div>
-                            <img src="${chap.icon}" class="icon" alt="${key}" onerror="this.style.display='none'">
+                            <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
                             <div class="chapter-bar-container">
                                 <div class="chapter-bar-fill" style="width: ${percent}%;"></div>
                             </div>
@@ -452,7 +451,7 @@
                     } else {
                         card.innerHTML = `
                             <div class="chapter-name">${key}</div>
-                            <img src="${chap.icon}" class="icon" alt="${key}" onerror="this.style.display='none'">
+                            <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
                             <div class="chapter-bar-container">
                                 <div class="chapter-bar-fill" style="width: 0%;"></div>
                             </div>
@@ -578,7 +577,6 @@
             if (row2.children.length > 0) container.appendChild(row2);
         }
 
-        // Lancement au chargement de la page
         window.onload = fetchSheetData;
     </script>
 </body>
