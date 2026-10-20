@@ -81,7 +81,7 @@
             text-align: center;
         }
 
-        /* Bloc Jauge Globale Personnalisée (Basé sur 480x62) */
+        /* Bloc Jauge Globale Personnalisée */
         .global-progress-box {
             background: linear-gradient(135deg, rgba(23,35,63,0.9), rgba(10,15,26,0.95));
             border: 2px solid var(--gold-dark);
@@ -100,7 +100,6 @@
             margin: 15px auto 10px auto;
         }
 
-        /* L'image de contenu s'étend en arrière-plan (z-index 1) avec le même ratio/taille */
         .custom-gauge-fill {
             position: absolute;
             top: 0;
@@ -115,7 +114,6 @@
             overflow: hidden;
         }
 
-        /* La bordure vient se superposer par-dessus (z-index 2) */
         .custom-gauge-border {
             position: absolute;
             top: 0;
@@ -243,26 +241,36 @@
             filter: drop-shadow(0 2px 6px rgba(243, 206, 120, 0.4));
         }
 
+        /* Jauge des cartes de chapitres avec jauge_content2.png */
         .chapter-bar-container {
             width: 100%;
-            background: #04060b;
-            border: 1px solid var(--gold-dark);
-            border-radius: 20px;
-            height: 14px;
+            aspect-ratio: 480 / 62;
             position: relative;
-            overflow: hidden;
             margin: 4px 0;
-            padding: 1px;
         }
 
         .chapter-bar-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
             height: 100%;
             width: 0%;
-            background-image: url('https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/jauge_content.png');
+            background-image: url('https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/jauge_content2.png');
             background-size: 100% 100%;
             background-repeat: no-repeat;
-            border-radius: 10px;
+            z-index: 1;
             transition: width 0.8s ease;
+            overflow: hidden;
+        }
+
+        .chapter-bar-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
         }
 
         .chapter-stats {
@@ -489,7 +497,7 @@
             <div class="reset-hint" id="reset-hint" style="display: none;" onclick="resetSelection()">🔄 Revenir au récapitulatif global</div>
         </div>
 
-        <!-- Quête des Illumineurs -->
+        <!-- Quête des Illumineurs (Ordre inversé) -->
         <div class="quest-box">
             <div class="details-header">
                 <img src="https://api.lorcana.ravensburger.com/images/fr/quest3/thumbnails/f1b6a5dfb5510f8fa4a89977e46715a2af94bfaeca5abcd4b444eb9804781fc4.png" style="width: auto; height: 45px; object-fit: contain; filter: drop-shadow(0 0 8px rgba(243, 206, 120, 0.6));" alt="Logo Quête">
@@ -497,8 +505,8 @@
             </div>
             <div class="quest-cards-row">
                 <div class="quest-card owned">
-                    <img src="https://ravensburger.cloud/cms/gallery/lorcana-web/products/iq3-great-hunny-rescue/iq3-product/fr_4rgecedmd4_1920x1080.png" class="quest-card-img" alt="Équipe Miel à la rescousse">
-                    <div class="quest-card-title">Équipe Miel à la rescousse</div>
+                    <img src="https://ravensburger.cloud/cms/gallery/lorcana-web/products/dt/fr_9qtnfq4muo.png" class="quest-card-img" alt="Menace des profondeurs">
+                    <div class="quest-card-title">Menace des profondeurs</div>
                     <div class="quest-status-badge status-owned">✨ Possédé</div>
                 </div>
 
@@ -509,8 +517,8 @@
                 </div>
 
                 <div class="quest-card owned">
-                    <img src="https://ravensburger.cloud/cms/gallery/lorcana-web/products/dt/fr_9qtnfq4muo.png" class="quest-card-img" alt="Menace des profondeurs">
-                    <div class="quest-card-title">Menace des profondeurs</div>
+                    <img src="https://ravensburger.cloud/cms/gallery/lorcana-web/products/iq3-great-hunny-rescue/iq3-product/fr_4rgecedmd4_1920x1080.png" class="quest-card-img" alt="Équipe Miel à la rescousse">
+                    <div class="quest-card-title">Équipe Miel à la rescousse</div>
                     <div class="quest-status-badge status-owned">✨ Possédé</div>
                 </div>
             </div>
@@ -593,6 +601,7 @@
                             <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
                             <div class="chapter-bar-container">
                                 <div class="chapter-bar-fill" style="width: ${percent}%;"></div>
+                                <img src="https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/jauge_border.png" class="chapter-bar-border" alt="Cadre">
                             </div>
                             <div class="chapter-stats">${chap.owned}/${chap.max} (${percent}%)</div>
                         `;
@@ -602,6 +611,7 @@
                             <img src="${chap.icon}" class="chapter-icon" alt="${key}" onerror="this.style.display='none'">
                             <div class="chapter-bar-container">
                                 <div class="chapter-bar-fill" style="width: 0%;"></div>
+                                <img src="https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/jauge_border.png" class="chapter-bar-border" alt="Cadre">
                             </div>
                             <div class="chapter-stats" style="color: var(--text-muted);">À venir (TBA)</div>
                         `;
