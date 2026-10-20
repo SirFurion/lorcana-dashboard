@@ -416,7 +416,7 @@
             const yearsMap = { 1: [], 2: [], 3: [], 4: [] };
             Object.keys(chaptersData).forEach(key => {
                 const chap = chaptersData[key];
-                if (yearsMap[chap.year]) {
+               if (chap && yearsMap[chap.year]) {
                     yearsMap[chap.year].push(key);
                 }
             });
