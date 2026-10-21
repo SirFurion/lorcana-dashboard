@@ -720,7 +720,7 @@
             container.innerHTML = '';
 
             // Génération des sections par chapitre
-            for [chapName, cards] of Object.entries(grouped)) {
+            for (const [chapName, cards] of Object.entries(grouped)) {
                 const section = document.createElement('div');
                 section.className = 'missing-chapter-section';
                 
