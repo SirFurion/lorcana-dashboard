@@ -174,7 +174,7 @@
             background: linear-gradient(135deg, var(--gold), var(--gold-light));
         }
 
-        /* Pop-up Modale (Agrandie pour les cartes) */
+        /* Pop-up Modale */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -202,6 +202,13 @@
             padding: 25px;
             position: relative;
             box-shadow: 0 0 40px rgba(243, 206, 120, 0.4);
+            transition: filter 0.3s ease;
+        }
+
+        /* État flouté de la modale quand le zoom est actif */
+        .modal-box.blurred {
+            filter: blur(6px) brightness(0.7);
+            pointer-events: none;
         }
 
         .modal-close-btn {
@@ -225,10 +232,58 @@
         .modal-content-scroll {
             overflow-y: auto;
             margin-top: 15px;
-            padding-right: 5px;
+            padding-right: 8px;
             display: flex;
             flex-direction: column;
             gap: 20px;
+        }
+
+        /* Personnalisation de la Scrollbar aux couleurs dorées */
+        .modal-content-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+        .modal-content-scroll::-webkit-scrollbar-track {
+            background: rgba(5, 8, 17, 0.6);
+            border-radius: 4px;
+        }
+        .modal-content-scroll::-webkit-scrollbar-thumb {
+            background: var(--gold-dark);
+            border-radius: 4px;
+            border: 1px solid var(--gold);
+        }
+        .modal-content-scroll::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        /* Zoom Overlay pour la carte en grand */
+        .card-zoom-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            padding: 20px;
+        }
+
+        .card-zoom-img {
+            max-height: 80%;
+            max-width: 80%;
+            object-fit: contain;
+            border-radius: 10px;
+            border: 3px solid var(--gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9), 0 0 20px rgba(243, 206, 120, 0.5);
+            animation: zoomIn 0.2s ease-in-out;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
         }
 
         /* Style des sections de chapitres dans la modale */
@@ -266,14 +321,27 @@
             gap: 6px;
         }
 
-        .missing-card-img {
+        .missing-card-img-wrapper {
             width: 100%;
             aspect-ratio: 745 / 1040;
-            object-fit: contain;
             border-radius: 4px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+            overflow: hidden;
             border: 1px solid var(--gold-dark);
             background: #04060b;
+            cursor: pointer;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .missing-card-img-wrapper:hover {
+            transform: scale(1.03);
+            border-color: var(--gold);
+            box-shadow: 0 0 10px rgba(243, 206, 120, 0.4);
+        }
+
+        .missing-card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .missing-card-name {
@@ -599,12 +667,17 @@
 
         <!-- Pop-up Modale pour les cartes manquantes -->
         <div id="missing-modal" class="modal-overlay">
-            <div class="modal-box">
+            <div id="modal-box-container" class="modal-box">
                 <button onclick="closeMissingModal()" class="modal-close-btn">✕</button>
                 <div class="section-title" style="margin-bottom: 0;">Mes Cartes Manquantes</div>
                 <div id="missing-modal-content" class="modal-content-scroll">
                     <span style="color: var(--text-muted); font-style: italic; font-size: 0.85rem; text-align: center; display: block; padding: 20px;">Chargement des cartes manquantes...</span>
                 </div>
+            </div>
+
+            <!-- Overlay de Zoom pour une carte -->
+            <div id="card-zoom-overlay" class="card-zoom-overlay" onclick="closeCardZoom()">
+                <img id="card-zoom-img" class="card-zoom-img" alt="Zoom Carte">
             </div>
         </div>
 
@@ -696,7 +769,28 @@
         }
 
         function closeMissingModal() {
+            closeCardZoom();
             document.getElementById('missing-modal').style.display = 'none';
+        }
+
+        // Fonctions de Zoom sur une carte
+        function openCardZoom(imgUrl) {
+            if (!imgUrl) return;
+            const zoomOverlay = document.getElementById('card-zoom-overlay');
+            const zoomImg = document.getElementById('card-zoom-img');
+            const modalBox = document.getElementById('modal-box-container');
+
+            zoomImg.src = imgUrl;
+            zoomOverlay.style.display = 'flex';
+            modalBox.classList.add('blurred');
+        }
+
+        function closeCardZoom() {
+            const zoomOverlay = document.getElementById('card-zoom-overlay');
+            const modalBox = document.getElementById('modal-box-container');
+
+            zoomOverlay.style.display = 'none';
+            modalBox.classList.remove('blurred');
         }
 
         // Affichage et regroupement des cartes manquantes par chapitre dans la modale
@@ -708,7 +802,6 @@
                 return;
             }
 
-            // Regroupement par chapitre
             const grouped = {};
             missingCardsList.forEach(card => {
                 if (!grouped[card.chapter]) {
@@ -719,7 +812,6 @@
 
             container.innerHTML = '';
 
-            // Génération des sections par chapitre
             for (const [chapName, cards] of Object.entries(grouped)) {
                 const section = document.createElement('div');
                 section.className = 'missing-chapter-section';
@@ -732,27 +824,25 @@
 
                 const grid = section.querySelector('.missing-cards-grid');
 
-                // Pour chaque carte, on charge l'image via l'API Lorcast de manière asynchrone
                 cards.forEach(card => {
                     const cardItem = document.createElement('div');
                     cardItem.className = 'missing-card-item';
                     cardItem.innerHTML = `
-                        <div class="missing-card-img" style="display: flex; align-items: center; justify-content: center;">
+                        <div class="missing-card-img-wrapper" style="display: flex; align-items: center; justify-content: center;">
                             <span style="font-size: 0.6rem; color: var(--text-muted);">...</span>
                         </div>
                         <div class="missing-card-name" title="${card.name}">${card.name}</div>
                     `;
                     grid.appendChild(cardItem);
 
-                    // Appel API Lorcast
                     fetchCardImage(card.setCode, card.cardNumber, cardItem);
                 });
             }
         }
 
-        // Fonction d'appel à l'API Lorcast pour une carte donnée
+        // Appel API Lorcast et configuration du clic pour le zoom
         async function fetchCardImage(setCode, cardNumber, itemElement) {
-            const imgContainer = itemElement.querySelector('.missing-card-img');
+            const imgWrapper = itemElement.querySelector('.missing-card-img-wrapper');
             try {
                 const response = await fetch(`https://api.lorcast.com/v0/cards/${setCode}/${cardNumber}`, { mode: 'cors' });
                 if (!response.ok) throw new Error();
@@ -761,12 +851,16 @@
                 const imageUrl = data.image_uris?.digital?.normal || '';
 
                 if (imageUrl) {
-                    imgContainer.innerHTML = `<img src="${imageUrl}" class="missing-card-img" alt="Carte">`;
+                    imgWrapper.innerHTML = `<img src="${imageUrl}" class="missing-card-img" alt="Carte">`;
+                    // Clic pour zoomer
+                    imgWrapper.onclick = () => openCardZoom(imageUrl);
                 } else {
-                    imgContainer.innerHTML = `<span style="font-size: 0.6rem; color: #ff6b6b;">Image indisponible</span>`;
+                    imgWrapper.innerHTML = `<span style="font-size: 0.6rem; color: #ff6b6b; display: flex; align-items: center; justify-content: center; height: 100%;">Indisponible</span>`;
+                    imgWrapper.style.cursor = 'default';
                 }
             } catch (err) {
-                imgContainer.innerHTML = `<span style="font-size: 0.6rem; color: #ff6b6b;">Erreur API</span>`;
+                imgWrapper.innerHTML = `<span style="font-size: 0.6rem; color: #ff6b6b; display: flex; align-items: center; justify-content: center; height: 100%;">Erreur API</span>`;
+                imgWrapper.style.cursor = 'default';
             }
         }
 
