@@ -262,6 +262,23 @@ header {
     padding: 20px;
 }
 
+.card-zoom-price-badge {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(9, 13, 22, 0.9);
+    border: 2px solid var(--gold);
+    color: var(--gold-light);
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 6px;
+    backdrop-filter: blur(4px);
+    z-index: 60;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.9);
+}
+
 .card-zoom-img {
     max-height: 80%;
     max-width: 80%;
