@@ -802,6 +802,14 @@
                 return;
             }
 
+            // Calcul du prix total global des cartes manquantes
+            let totalMissingPrice = 0;
+            missingCardsList.forEach(card => {
+                if (card.price && !isNaN(card.price)) {
+                    totalMissingPrice += card.price;
+                }
+            });
+
             const grouped = {};
             missingCardsList.forEach(card => {
                 if (!grouped[card.chapter]) {
@@ -811,6 +819,12 @@
             });
 
             container.innerHTML = '';
+
+            // Bandeau récapitulatif du total en haut de la modale
+            const summaryBanner = document.createElement('div');
+            summaryBanner.style.cssText = "background: rgba(243, 206, 120, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 10px; text-align: center; font-family: 'Cinzel', serif; color: var(--gold-light); font-size: 0.85rem; margin-bottom: 5px;";
+            summaryBanner.innerHTML = `Valeur estimée totale manquante : <strong style="color: var(--gold);">${totalMissingPrice.toFixed(2).replace('.', ',')} €</strong>`;
+            container.appendChild(summaryBanner);
 
             for (const [chapName, cards] of Object.entries(grouped)) {
                 const section = document.createElement('div');
@@ -827,6 +841,9 @@
                 cards.forEach(card => {
                     const cardItem = document.createElement('div');
                     cardItem.className = 'missing-card-item';
+                    // Formatage du prix numérique en euros (ex: 3.5 -> "3,50 €")
+                    const formattedPrice = (card.price && card.price > 0) ? `${card.price.toFixed(2).replace('.', ',')} €` : '';
+                    const priceBadge = formattedPrice ? `<div class="card-price-badge">${formattedPrice}</div>` : '';
                     cardItem.innerHTML = `
                         <div class="missing-card-img-wrapper" style="display: flex; align-items: center; justify-content: center;">
                             <span style="font-size: 0.6rem; color: var(--text-muted);">...</span>
