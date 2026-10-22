@@ -26,14 +26,20 @@ function closeMissingModal() {
     document.getElementById('missing-modal').style.display = 'none';
 }
 
-// Fonctions de Zoom sur une carte
-function openCardZoom(imgUrl) {
+// Fonctions de Zoom sur une carte avec son prix
+function openCardZoom(imgUrl, cardPrice) {
     if (!imgUrl) return;
     const zoomOverlay = document.getElementById('card-zoom-overlay');
-    const zoomImg = document.getElementById('card-zoom-img');
     const modalBox = document.getElementById('modal-box-container');
 
-    zoomImg.src = imgUrl;
+    // On s'assure d'avoir un conteneur propre pour l'image zoomée et sa pastille de prix
+    zoomOverlay.innerHTML = `
+        <div style="position: relative; display: inline-flex; justify-content: center; align-items: center;">
+            <img src="${imgUrl}" class="card-zoom-img" alt="Zoom Carte">
+            ${cardPrice ? `<div class="card-zoom-price-badge">${cardPrice}</div>` : ''}
+        </div>
+    `;
+
     zoomOverlay.style.display = 'flex';
     modalBox.classList.add('blurred');
 }
@@ -55,7 +61,6 @@ async function renderMissingCardsModal() {
         return;
     }
 
-    // Calcul du prix total global de toutes les cartes manquantes
     let totalMissingPrice = 0;
     missingCardsList.forEach(card => {
         if (card.price && !isNaN(card.price)) {
@@ -63,7 +68,6 @@ async function renderMissingCardsModal() {
         }
     });
 
-    // Regroupement par chapitre
     const grouped = {};
     missingCardsList.forEach(card => {
         if (!grouped[card.chapter]) {
@@ -74,18 +78,15 @@ async function renderMissingCardsModal() {
 
     container.innerHTML = '';
 
-    // Bandeau récapitulatif global en haut de la modale
     const summaryBanner = document.createElement('div');
     summaryBanner.style.cssText = "background: rgba(243, 206, 120, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 10px; text-align: center; font-family: 'Cinzel', serif; color: var(--gold-light); font-size: 0.85rem; margin-bottom: 5px;";
     summaryBanner.innerHTML = `Valeur estimée totale manquante : <strong style="color: var(--gold);">${totalMissingPrice.toFixed(2).replace('.', ',')} €</strong>`;
     container.appendChild(summaryBanner);
 
-    // Génération des sections par chapitre
     for (const [chapName, cards] of Object.entries(grouped)) {
         const section = document.createElement('div');
         section.className = 'missing-chapter-section';
         
-        // Calcul du total des prix pour ce chapitre spécifique
         let chapTotal = 0;
         cards.forEach(c => {
             if (c.price && !isNaN(c.price)) chapTotal += c.price;
@@ -105,26 +106,25 @@ async function renderMissingCardsModal() {
             cardItem.className = 'missing-card-item';
             
             const formattedPrice = (card.price && card.price > 0) ? `${card.price.toFixed(2).replace('.', ',')} €` : '';
-            const priceBadge = formattedPrice ? `<div class="card-price-badge">${formattedPrice}</div>` : '';
             const priceSubText = formattedPrice ? `<div class="card-price-sub">${formattedPrice}</div>` : `<div class="card-price-sub" style="color: var(--text-muted); font-style: italic;">Prix N/C</div>`;
 
+            // On passe le prix formaté pour qu'il s'affiche dans le zoom de la carte
             cardItem.innerHTML = `
                 <div class="missing-card-img-wrapper" style="position: relative; display: flex; align-items: center; justify-content: center;">
                     <span style="font-size: 0.6rem; color: var(--text-muted);">...</span>
-                    ${priceBadge}
                 </div>
                 <div class="missing-card-name" title="${card.name}">${card.name}</div>
                 ${priceSubText}
             `;
             grid.appendChild(cardItem);
 
-            fetchCardImage(card.setCode, card.cardNumber, cardItem);
+            fetchCardImage(card.setCode, card.cardNumber, cardItem, formattedPrice);
         });
     }
 }
 
-// Appel API Lorcast et configuration du clic pour le zoom
-async function fetchCardImage(setCode, cardNumber, itemElement) {
+// Appel API Lorcast et configuration du clic pour le zoom (sans pastille sur la grille)
+async function fetchCardImage(setCode, cardNumber, itemElement, formattedPrice) {
     const imgWrapper = itemElement.querySelector('.missing-card-img-wrapper');
     try {
         const response = await fetch(`https://api.lorcast.com/v0/cards/${setCode}/${cardNumber}`, { mode: 'cors' });
@@ -135,7 +135,8 @@ async function fetchCardImage(setCode, cardNumber, itemElement) {
 
         if (imageUrl) {
             imgWrapper.innerHTML = `<img src="${imageUrl}" class="missing-card-img" alt="Carte">`;
-            imgWrapper.onclick = () => openCardZoom(imageUrl);
+            // Clic pour zoomer en transmettant le prix
+            imgWrapper.onclick = () => openCardZoom(imageUrl, formattedPrice);
         } else {
             imgWrapper.innerHTML = `<span style="font-size: 0.6rem; color: #ff6b6b; display: flex; align-items: center; justify-content: center; height: 100%;">Indisponible</span>`;
             imgWrapper.style.cursor = 'default';
@@ -242,7 +243,7 @@ function renderRarities() {
     container.innerHTML = '';
 
     const row1Names = ["Commune", "Peu Commune", "Rare", "Super Rare", "Légendaire"];
-    const row2Names = ["Épique", "Enchantée", "Iconique"];
+    const row2Names = ["Enchantée", "Épique", "Iconique"];
 
     if (!selectedKey) {
         title.innerText = "Récapitulatif Global par Rareté (Tous chapitres sortis cumulés)";
@@ -261,6 +262,7 @@ function renderRarities() {
                             computedGlobalRarities[rName] = { owned: 0, total: 0 };
                         }
                         computedGlobalRarities[rName].owned += owned;
+                        computedGlobalRopraritiesTotal = computedGlobalRarities[rName].total + total;
                         computedGlobalRarities[rName].total += total;
                     }
                 });
