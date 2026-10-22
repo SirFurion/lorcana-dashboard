@@ -255,6 +255,13 @@
             background: var(--gold);
         }
 
+        .card-price-sub {
+            font-size: 0.7rem;
+            color: var(--gold);
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
         /* Zoom Overlay pour la carte en grand */
         .card-zoom-overlay {
             display: none;
@@ -838,17 +845,24 @@
 
                 const grid = section.querySelector('.missing-cards-grid');
 
-                cards.forEach(card => {
+               cards.forEach(card => {
                     const cardItem = document.createElement('div');
                     cardItem.className = 'missing-card-item';
-                    // Formatage du prix numérique en euros (ex: 3.5 -> "3,50 €")
+                    
+                    // Formatage du prix en euros (ex: 3.5 -> "3,50 €")
                     const formattedPrice = (card.price && card.price > 0) ? `${card.price.toFixed(2).replace('.', ',')} €` : '';
                     const priceBadge = formattedPrice ? `<div class="card-price-badge">${formattedPrice}</div>` : '';
+                    
+                    // Texte du prix sous le nom de la carte (ou "Prix non renseigné" si vide)
+                    const priceSubText = formattedPrice ? `<div class="card-price-sub">${formattedPrice}</div>` : `<div class="card-price-sub" style="color: var(--text-muted); font-style: italic;">Prix N/C</div>`;
+
                     cardItem.innerHTML = `
-                        <div class="missing-card-img-wrapper" style="display: flex; align-items: center; justify-content: center;">
+                        <div class="missing-card-img-wrapper" style="position: relative; display: flex; align-items: center; justify-content: center;">
                             <span style="font-size: 0.6rem; color: var(--text-muted);">...</span>
+                            ${priceBadge}
                         </div>
                         <div class="missing-card-name" title="${card.name}">${card.name}</div>
+                        ${priceSubText}
                     `;
                     grid.appendChild(cardItem);
 
