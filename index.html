@@ -817,7 +817,7 @@
             modalBox.classList.remove('blurred');
         }
 
-        // Affichage et regroupement des cartes manquantes par chapitre dans la modale
+// Affichage, regroupement et calcul des totaux par chapitre dans la modale
         async function renderMissingCardsModal() {
             const container = document.getElementById('missing-modal-content');
             
@@ -826,7 +826,7 @@
                 return;
             }
 
-            // Calcul du prix total global des cartes manquantes
+            // Calcul du prix total global de toutes les cartes manquantes
             let totalMissingPrice = 0;
             missingCardsList.forEach(card => {
                 if (card.price && !isNaN(card.price)) {
@@ -834,6 +834,7 @@
                 }
             });
 
+            // Regroupement par chapitre
             const grouped = {};
             missingCardsList.forEach(card => {
                 if (!grouped[card.chapter]) {
@@ -844,12 +845,13 @@
 
             container.innerHTML = '';
 
-            // Bandeau récapitulatif du total en haut de la modale
+            // Bandeau récapitulatif global en haut de la modale
             const summaryBanner = document.createElement('div');
             summaryBanner.style.cssText = "background: rgba(243, 206, 120, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 10px; text-align: center; font-family: 'Cinzel', serif; color: var(--gold-light); font-size: 0.85rem; margin-bottom: 5px;";
             summaryBanner.innerHTML = `Valeur estimée totale manquante : <strong style="color: var(--gold);">${totalMissingPrice.toFixed(2).replace('.', ',')} €</strong>`;
             container.appendChild(summaryBanner);
 
+            // Génération des sections par chapitre
             for (const [chapName, cards] of Object.entries(grouped)) {
                 const section = document.createElement('div');
                 section.className = 'missing-chapter-section';
@@ -860,20 +862,19 @@
                     if (c.price && !isNaN(c.price)) chapTotal += c.price;
                 });
                 const chapPriceText = chapTotal > 0 ? ` - <span style="color: var(--gold);">${chapTotal.toFixed(2).replace('.', ',')} €</span>` : '';
-                
+
                 section.innerHTML = `
-                    <div class="missing-chapter-title">${chapName} (${cards.length} manquante${cards.length > 1 ? 's' : ''})</div>
+                    <div class="missing-chapter-title">${chapName} (${cards.length} manquante${cards.length > 1 ? 's' : ''}${chapPriceText})</div>
                     <div class="missing-cards-grid" id="grid-${CSS.escape(chapName)}"></div>
                 `;
                 container.appendChild(section);
 
                 const grid = section.querySelector('.missing-cards-grid');
 
-               cards.forEach(card => {
+                cards.forEach(card => {
                     const cardItem = document.createElement('div');
                     cardItem.className = 'missing-card-item';
                     
-                    // Formatage du prix en euros (ex: 3.5 -> "3,50 €")
                     const formattedPrice = (card.price && card.price > 0) ? `${card.price.toFixed(2).replace('.', ',')} €` : '';
                     const priceBadge = formattedPrice ? `<div class="card-price-badge">${formattedPrice}</div>` : '';
                     const priceSubText = formattedPrice ? `<div class="card-price-sub">${formattedPrice}</div>` : `<div class="card-price-sub" style="color: var(--text-muted); font-style: italic;">Prix N/C</div>`;
