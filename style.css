@@ -711,7 +711,7 @@ header {
     transform: rotate(35deg) translateY(100%);
 }
 
-/* Conteneur 3D global */
+/* Conteneur 3D global de la carte zoomée */
 .collector-zoom-card-container {
     position: relative;
     display: inline-block;
@@ -719,20 +719,15 @@ header {
     perspective: 1200px;
     transform-style: preserve-3d;
     user-select: none;
+    border-radius: 12px;
+    overflow: hidden; /* Masque tout ce qui dépasse, sans fond noir parasite */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
     transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+    background: transparent; /* Suppression totale du fond noir */
 }
 
 .collector-zoom-card-container:active {
     cursor: grabbing;
-}
-
-/* Boîte interne isolée : c'est elle qui cadre l'image et bloque le foil à l'intérieur */
-.collector-zoom-inner-box {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden; /* Empêche absolument tout débordement à droite/gauche */
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
-    background: #000;
 }
 
 /* Image de la carte zoomée */
@@ -745,7 +740,7 @@ header {
     backface-visibility: hidden;
 }
 
-/* Calque de brillance foil confiné dans la boîte interne */
+/* Calque de brillance foil dynamique */
 .collector-zoom-foil-shine {
     position: absolute;
     top: -50%;
