@@ -726,10 +726,12 @@ header {
     cursor: pointer; /* Indique qu'on peut cliquer pour fermer */
 }
 
-/* Conteneur de la carte zoomée */
+/* Conteneur de la carte zoomée : s'adapte strictement à la taille de l'image */
 .collector-zoom-card-container {
     position: relative;
-    display: inline-block;
+    display: flex; /* Force le conteneur à adopter exactement les dimensions de son contenu */
+    align-items: center;
+    justify-content: center;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
@@ -741,6 +743,7 @@ header {
     display: block;
     max-height: 80vh;
     width: auto;
+    height: auto; /* Garantit un ratio parfait sans espace vide */
     border-radius: 12px;
     pointer-events: none;
 }
