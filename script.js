@@ -153,35 +153,52 @@ function closeCollectorModal() {
     document.getElementById('collector-modal').style.display = 'none';
 }
 
-function openCollectorZoom(cardData) {
-    // cardData peut être l'objet complet de la carte ou tu récupères l'URL et le layout
-    if (!cardData || !cardData.image_url) return;
+function openCollectorZoom(imgUrl) {
+    if (!imgUrl) return;
     
     const zoomOverlay = document.getElementById('collector-zoom-overlay');
     const modalBox = document.getElementById('modal-box-container');
 
-    const isLandscape = cardData.layout === 'landscape';
+    if (!zoomOverlay) {
+        console.error("Erreur : L'élément #collector-zoom-overlay est introuvable dans le HTML.");
+        return;
+    }
 
+    // On injecte proprement le contenu du zoom
     zoomOverlay.innerHTML = `
-        <div class="collector-zoom-card-container ${isLandscape ? 'is-landscape' : ''}" id="zoom-card-container">
-            <img src="${cardData.image_url}" class="card-zoom-img" alt="Zoom Carte">
+        <div class="collector-zoom-card-container" id="zoom-card-container">
+            <img src="${imgUrl}" class="card-zoom-img" alt="Zoom Carte">
         </div>
     `;
     
-    zoomOverlay.onclick = () => {
+    // Un clic n'importe où sur l'overlay ferme le zoom
+    zoomOverlay.onclick = (e) => {
+        // Optionnel : si on clique directement sur l'image ou son conteneur, 
+        // tu peux choisir de fermer ou de laisser ouvert. Là, tout ferme au clic.
         closeCollectorZoom();
     };
 
+    // On affiche l'overlay
     zoomOverlay.style.display = 'flex';
-    modalBox.classList.add('blurred');
+    
+    // Si le conteneur principal existe, on applique le flou
+    if (modalBox) {
+        modalBox.classList.add('blurred');
+    }
 }
 
 function closeCollectorZoom() {
     const zoomOverlay = document.getElementById('collector-zoom-overlay');
     const modalBox = document.getElementById('modal-box-container');
 
-    zoomOverlay.style.display = 'none';
-    modalBox.classList.remove('blurred');
+    if (zoomOverlay) {
+        zoomOverlay.style.display = 'none';
+        zoomOverlay.innerHTML = ''; // Nettoyage
+    }
+    
+    if (modalBox) {
+        modalBox.classList.remove('blurred');
+    }
 }
 
 async function renderCollectorModal() {
