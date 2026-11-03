@@ -750,15 +750,24 @@ header {
     transition: transform 0.3s ease;
 }
 
-/* --- ROTATION À 90° POUR LES CARTES LIEUX (LANDSCAPE) --- */
+.collector-zoom-card-container.is-landscape {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* On donne la priorité à l'espace horizontal */
+    width: 80vh;
+    height: 80vw;
+    max-width: 90vw;
+    max-height: 85vh;
+}
+
+/* --- IMAGE PIVOTÉE ET AJUSTÉE --- */
 .collector-zoom-card-container.is-landscape img.card-zoom-img {
     transform: rotate(90deg);
-    /* Comme l'image est pivotée, on inverse la logique des dimensions max pour qu'elle tienne dans l'écran */
-    max-height: 80vh; 
-    max-width: none;
+    /* On inverse les limites max pour correspondre à l'orientation réelle après rotation */
+    max-width: 80vh;
+    max-height: 85vw;
     width: auto;
     height: auto;
-    border-radius: 12px;
-    pointer-events: none;
-    transition: transform 0.3s ease;
+    object-fit: contain;
 }
