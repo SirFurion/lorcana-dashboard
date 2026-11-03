@@ -711,23 +711,29 @@ header {
     transform: rotate(35deg) translateY(100%);
 }
 
-/* Conteneur 3D global de la carte zoomée */
+/* Overlay global du zoom */
+#collector-zoom-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    cursor: pointer; /* Indique qu'on peut cliquer pour fermer */
+}
+
+/* Conteneur de la carte zoomée */
 .collector-zoom-card-container {
     position: relative;
     display: inline-block;
-    cursor: grab;
-    perspective: 1200px;
-    transform-style: preserve-3d;
-    user-select: none;
     border-radius: 12px;
-    overflow: hidden; /* Garantit qu'aucun pixel ne dépasse sur les côtés */
+    overflow: hidden;
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
-    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
     background: transparent;
-}
-
-.collector-zoom-card-container:active {
-    cursor: grabbing;
 }
 
 /* Image de la carte zoomée */
@@ -737,5 +743,4 @@ header {
     width: auto;
     border-radius: 12px;
     pointer-events: none;
-    backface-visibility: hidden;
 }
