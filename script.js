@@ -183,10 +183,19 @@ async function renderCollectorModal() {
         return;
     }
 
-    const grouped = {};
+    // 1. Ordre d'affichage souhaité des raretés et libellés correspondants
+    const rarityConfig = {
+        8: "Iconique",
+        7: "Enchantée",
+        6: "Épique"
+    };
+
+    // 2. Regroupement par niveau de rareté
+    const groupedByRarity = {};
     collectorCardsList.forEach(card => {
-        if (!grouped[card.chapter]) grouped[card.chapter] = [];
-        grouped[card.chapter].push(card);
+        const rKey = card.rarity; // 6, 7 ou 8
+        if (!groupedByRarity[rKey]) groupedByRarity[rKey] = [];
+        groupedByRarity[rKey].push(card);
     });
 
     container.innerHTML = '';
@@ -196,13 +205,26 @@ async function renderCollectorModal() {
     summaryBanner.innerHTML = `Vitrine de la collection : <strong style="color: var(--gold);">${collectorCardsList.length} carte${collectorCardsList.length > 1 ? 's' : ''} d'exception</strong>`;
     container.appendChild(summaryBanner);
 
-    for (const [chapName, cards] of Object.entries(grouped)) {
+    // 3. Parcours dans l'ordre (Iconique -> Enchantée -> Épique, ou inversement selon préférence, ici 8, 7, 6)
+    [8, 7, 6].forEach(rarityLevel => {
+        const cards = groupedByRarity[rarityLevel];
+        if (!cards || cards.length === 0) return; // Omis si vide
+
+        // Tri des cartes du plus petit chapitre au plus grand au sein de chaque rareté
+        cards.sort((a, b) => {
+            const numA = parseInt(String(a.chapter).replace(/\D/g, '')) || 0;
+            const numB = parseInt(String(b.chapter).replace(/\D/g, '')) || 0;
+            return numA - numB;
+        });
+
+        const rarityName = rarityConfig[rarityLevel] || `Rareté ${rarityLevel}`;
+
         const section = document.createElement('div');
         section.className = 'missing-chapter-section';
 
         section.innerHTML = `
-            <div class="missing-chapter-title">${chapName} (${cards.length} carte${cards.length > 1 ? 's' : ''})</div>
-            <div class="missing-cards-grid" id="collector-grid-${CSS.escape(chapName)}"></div>
+            <div class="missing-chapter-title">${rarityName} (${cards.length} carte${cards.length > 1 ? 's' : ''})</div>
+            <div class="missing-cards-grid" id="collector-grid-rarity-${rarityLevel}"></div>
         `;
         container.appendChild(section);
 
@@ -212,17 +234,20 @@ async function renderCollectorModal() {
             const cardItem = document.createElement('div');
             cardItem.className = 'missing-card-item';
 
+            // Affichage : "Chapitre X - Nom de la carte"
+            const displayTitle = `${card.chapter} - ${card.name}`;
+
             cardItem.innerHTML = `
                 <div class="missing-card-img-wrapper" style="position: relative; display: flex; align-items: center; justify-content: center;">
                     <span style="font-size: 0.6rem; color: var(--text-muted);">...</span>
                 </div>
-                <div class="missing-card-name" title="${card.name}">${card.name}</div>
+                <div class="missing-card-name" title="${displayTitle}">${displayTitle}</div>
             `;
             grid.appendChild(cardItem);
 
             fetchCollectorCardImage(card.setCode, card.cardNumber, cardItem);
         });
-    }
+    });
 }
 
 async function fetchCollectorCardImage(setCode, cardNumber, itemElement) {
