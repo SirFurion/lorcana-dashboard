@@ -152,7 +152,7 @@ header {
 
 .missing-action-btn {
     /* Si tes images sont sur GitHub ou dans un dossier local, ajuste le chemin si besoin */
-    background-image: url('bouton.png');
+    background-image: url('https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/bouton.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-color: transparent; /* Supprime l'ancien dégradé de fond */
@@ -171,7 +171,7 @@ header {
 }
 
 .missing-action-btn:hover {
-    background-image: url('bouton_hover.png');
+    background-image: url('https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/bouton_hover.png');
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(243, 206, 120, 0.4);
 }
