@@ -720,10 +720,10 @@ header {
     transform-style: preserve-3d;
     user-select: none;
     border-radius: 12px;
-    overflow: hidden; /* Masque tout ce qui dépasse, sans fond noir parasite */
+    overflow: hidden; /* Tronque en dur tout ce qui oserait dépasser */
     box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
     transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-    background: transparent; /* Suppression totale du fond noir */
+    background: transparent;
 }
 
 .collector-zoom-card-container:active {
@@ -740,23 +740,26 @@ header {
     backface-visibility: hidden;
 }
 
-/* Calque de brillance foil dynamique */
+/* Calque de brillance foil confiné à 100% dans les limites de la carte */
 .collector-zoom-foil-shine {
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
     pointer-events: none;
-    opacity: 0.5;
+    opacity: 0.4;
     background: linear-gradient(
         135deg,
-        transparent 35%,
-        rgba(255, 255, 255, 0.25) 45%,
-        rgba(255, 215, 0, 0.45) 50%,
-        rgba(255, 255, 255, 0.25) 55%,
-        transparent 65%
+        transparent 30%,
+        rgba(255, 255, 255, 0.2) 45%,
+        rgba(255, 215, 0, 0.4) 50%,
+        rgba(255, 255, 255, 0.2) 55%,
+        transparent 70%
     );
+    background-size: 200% 200%;
+    background-position: 50% 50%;
     mix-blend-mode: overlay;
     z-index: 2;
     transition: opacity 0.3s ease;
