@@ -153,18 +153,42 @@ function closeCollectorModal() {
     document.getElementById('collector-modal').style.display = 'none';
 }
 
+let currentRotation = 0;
+
 function openCollectorZoom(imgUrl) {
     if (!imgUrl) return;
     const zoomOverlay = document.getElementById('collector-zoom-overlay');
     const modalBox = document.getElementById('collector-box-container');
 
+    currentRotation = 0; // Réinitialisation de la rotation à l'ouverture
+
     zoomOverlay.innerHTML = `
-        <div style="position: relative; display: inline-flex; justify-content: center; align-items: center;">
-            <img src="${imgUrl}" class="card-zoom-img" alt="Zoom Carte">
+        <div class="collector-zoom-card-container" onclick="rotateCollectorZoom(event)">
+            <div class="collector-zoom-foil-shine" id="zoom-foil-shine"></div>
+            <img src="${imgUrl}" class="card-zoom-img" id="zoom-card-img" alt="Zoom Carte">
         </div>
     `;
     zoomOverlay.style.display = 'flex';
     modalBox.classList.add('blurred');
+}
+
+function rotateCollectorZoom(event) {
+    // Empêche la fermeture de la modale si on clique sur la carte
+    event.stopPropagation();
+    
+    currentRotation = (currentRotation + 15) % 45; 
+    if (currentRotation > 30) currentRotation = -15; // Cycle de -15° à +30° pour donner un effet naturel de va-et-vient
+
+    const img = document.getElementById('zoom-card-img');
+    const shine = document.getElementById('zoom-foil-shine');
+
+    if (img && shine) {
+        img.style.transform = `rotate(${currentRotation}deg) scale(1.05)`;
+        // Le reflet foil se décale en sens inverse ou suit l'inclinaison pour simuler la lumière
+        const shineOffset = 50 + (currentRotation * 2);
+        shine.style.background = `linear-gradient(${135 + currentRotation}deg, transparent 30%, rgba(255, 255, 255, 0.4) ${shineOffset}%, transparent 70%)`;
+        shine.style.opacity = '1';
+    }
 }
 
 function closeCollectorZoom() {
