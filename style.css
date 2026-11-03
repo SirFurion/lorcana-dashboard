@@ -754,8 +754,8 @@ header {
 .collector-zoom-card-container.is-landscape img.card-zoom-img {
     transform: rotate(90deg);
     /* Comme l'image est pivotée, on inverse la logique des dimensions max pour qu'elle tienne dans l'écran */
-    max-height: 80vw; 
-    max-width: 80vh;
+    max-height: none; 
+    max-width: 85vw;
     width: auto;
     height: auto;
 }
