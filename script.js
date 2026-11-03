@@ -153,9 +153,15 @@ function closeCollectorModal() {
     document.getElementById('collector-modal').style.display = 'none';
 }
 
-function openCollectorZoom(imgUrl) {
-    if (!imgUrl) return;
-    
+function openCollectorZoom(cardInput) {
+    if (!cardInput) return;
+
+    // Gestion souple si on passe un objet ou juste une string URL
+    const imageUrl = typeof cardInput === 'string' ? cardInput : cardInput.imageUrl;
+    const layout = typeof cardInput === 'object' ? cardInput.layout : 'normal';
+
+    if (!imageUrl) return;
+
     const zoomOverlay = document.getElementById('collector-zoom-overlay');
     const modalBox = document.getElementById('modal-box-container');
 
@@ -164,24 +170,22 @@ function openCollectorZoom(imgUrl) {
         return;
     }
 
-    // On injecte proprement le contenu du zoom
+    const isLandscape = (layout === 'landscape');
+
+    // On injecte la classe is-landscape si nécessaire
     zoomOverlay.innerHTML = `
-        <div class="collector-zoom-card-container" id="zoom-card-container">
-            <img src="${imgUrl}" class="card-zoom-img" alt="Zoom Carte">
+        <div class="collector-zoom-card-container ${isLandscape ? 'is-landscape' : ''}" id="zoom-card-container">
+            <img src="${imageUrl}" class="card-zoom-img" alt="Zoom Carte">
         </div>
     `;
     
-    // Un clic n'importe où sur l'overlay ferme le zoom
-    zoomOverlay.onclick = (e) => {
-        // Optionnel : si on clique directement sur l'image ou son conteneur, 
-        // tu peux choisir de fermer ou de laisser ouvert. Là, tout ferme au clic.
+    // Fermeture au clic sur l'overlay
+    zoomOverlay.onclick = () => {
         closeCollectorZoom();
     };
 
-    // On affiche l'overlay
     zoomOverlay.style.display = 'flex';
     
-    // Si le conteneur principal existe, on applique le flou
     if (modalBox) {
         modalBox.classList.add('blurred');
     }
@@ -193,7 +197,7 @@ function closeCollectorZoom() {
 
     if (zoomOverlay) {
         zoomOverlay.style.display = 'none';
-        zoomOverlay.innerHTML = ''; // Nettoyage
+        zoomOverlay.innerHTML = '';
     }
     
     if (modalBox) {
