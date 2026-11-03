@@ -707,47 +707,39 @@ header {
     transform: rotate(35deg) translateY(100%);
 }
 
+.missing-card-item:hover::after {
+    transform: rotate(35deg) translateY(100%);
+}
+
 /* Conteneur interactif 3D de la carte zoomée */
 .collector-zoom-card-container {
     position: relative;
-    display: inline-block; /* S'ajuste exactement à la taille de l'image qu'il contient */
+    display: inline-block;
     cursor: grab;
     perspective: 1200px;
     transform-style: preserve-3d;
     user-select: none;
     border-radius: 12px;
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .collector-zoom-card-container:active {
     cursor: grabbing;
 }
 
-/* Image de la carte zoomée */
+/* Image de la carte zoomée avec le foil intégré directement par-dessus */
 .collector-zoom-card-container img.card-zoom-img {
     display: block;
-    max-height: 80vh; /* Empêche la carte de dépasser de l'écran en hauteur */
+    max-height: 80vh;
     width: auto;
     border-radius: 12px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
     pointer-events: none;
     backface-visibility: hidden;
+    
+    /* Effet foil fusionné : le dégradé lumineux se superpose à l'image de la carte */
+    background-image: linear-gradient(135deg, transparent 40%, rgba(255, 215, 0, 0.25) 50%, transparent 60%);
+    background-blend-mode: overlay;
+    transition: background 0.3s ease;
 }
 
-/* Calque de brillance foil dynamique calé sur l'image */
-.collector-zoom-foil-shine {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-    pointer-events: none;
-    opacity: 0.7;
-    background: linear-gradient(135deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%);
-    mix-blend-mode: overlay;
-    z-index: 2;
-}
-
-.missing-card-item:hover::after {
-    transform: rotate(35deg) translateY(100%);
-}
