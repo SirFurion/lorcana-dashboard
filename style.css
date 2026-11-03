@@ -707,6 +707,39 @@ header {
     transform: rotate(35deg) translateY(100%);
 }
 
+/* Conteneur interactif de la carte zoomée */
+.collector-zoom-card-container {
+    position: relative;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    perspective: 1000px;
+}
+
+/* Image de la carte zoomée avec transition fluide pour la rotation */
+.collector-zoom-card-container img.card-zoom-img {
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    border-radius: 10px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+}
+
+/* Calque de brillance foil dynamique sur le zoom */
+.collector-zoom-foil-shine {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    pointer-events: none;
+    opacity: 0.6;
+    transition: background 0.4s ease, opacity 0.4s ease;
+    background: linear-gradient(135deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%);
+    mix-blend-mode: overlay;
+    z-index: 2;
+}
+
 .missing-card-item:hover::after {
     transform: rotate(35deg) translateY(100%);
 }
