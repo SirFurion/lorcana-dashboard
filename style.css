@@ -151,23 +151,29 @@ header {
 }
 
 .missing-action-btn {
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-    color: var(--bg-deep);
+    /* Si tes images sont sur GitHub ou dans un dossier local, ajuste le chemin si besoin */
+    background-image: url('bouton.png');
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-color: transparent; /* Supprime l'ancien dégradé de fond */
+    
+    color: var(--gold-light); /* Texte clair pour bien contraster sur l'asset */
     font-family: 'Cinzel', serif;
     font-weight: 700;
     font-size: 0.9rem;
-    padding: 12px 24px;
-    border: 2px solid var(--gold-light);
+    padding: 14px 28px; /* Ajuste légèrement le padding selon la hauteur de ton asset */
+    border: none; /* Retire la bordure par défaut si ton image intègre déjà un cadre */
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(243, 206, 120, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
     transition: all 0.2s ease;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
 }
 
 .missing-action-btn:hover {
+    background-image: url('bouton_hover.png');
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(243, 206, 120, 0.5);
-    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    box-shadow: 0 6px 20px rgba(243, 206, 120, 0.4);
 }
 
 /* Pop-up Modale */
