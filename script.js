@@ -183,15 +183,14 @@ async function renderCollectorModal() {
         return;
     }
 
-    // 1. Correction de l'association correcte des niveaux de rareté :
-    // 6 = Épique, 7 = Enchantée, 8 = Iconique
+    // 1. Correction selon ton barème réel : 6 = Enchantée, 7 = Épique, 8 = Illustre
     const rarityConfig = {
-        6: "Épique",
-        7: "Enchantée",
-        8: "Iconique"
+        8: "Illustre",
+        7: "Épique",
+        6: "Enchantée"
     };
 
-    // 2. Regroupement par niveau de rareté
+    // 2. Regroupement par niveau de rareté réel
     const groupedByRarity = {};
     collectorCardsList.forEach(card => {
         const rKey = card.rarity; // 6, 7 ou 8
@@ -207,7 +206,7 @@ async function renderCollectorModal() {
     container.appendChild(summaryBanner);
 
     // 3. Ordre d'affichage (du plus rare / haut niveau au plus bas : 8, 7, 6)
-    [6, 7, 8].forEach(rarityLevel => {
+    [8, 7, 6].forEach(rarityLevel => {
         const cards = groupedByRarity[rarityLevel];
         if (!cards || cards.length === 0) return; // Omis si vide
 
