@@ -200,7 +200,7 @@ function initZoomInteractions() {
         e.stopPropagation();
         isDragging = true;
         hasDragged = false;
-        startX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+        startX = e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : 0);
         
         container.style.transition = 'none';
         shine.style.transition = 'none';
@@ -209,23 +209,22 @@ function initZoomInteractions() {
     const onMove = (e) => {
         if (!isDragging) return;
 
-        const currentX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-        const diffX = currentX - startX; // Positif vers la droite, Négatif vers la gauche
+        const currentX = e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : 0);
+        const diffX = currentX - startX; // Négatif à gauche, Positif à droite
 
         if (Math.abs(diffX) > 4) {
             hasDragged = true;
         }
 
-        // Rotation 3D bidirectionnelle fluide
-        currentRotationY = Math.max(-30, Math.min(30, diffX * 0.4));
-        currentRotationX = -currentRotationY * 0.25;
+        // Rotation bidirectionnelle fluide (gauche / droite)
+        currentRotationY = Math.max(-25, Math.min(25, diffX * 0.35));
+        currentRotationX = -currentRotationY * 0.2;
 
-        // On applique la rotation sur le conteneur
         container.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg) scale(1.08)`;
 
-        // Le foil glisse selon l'inclinaison
-        const shineTranslate = currentRotationY * 1.5;
-        shine.style.transform = `translateX(${shineTranslate}%)`;
+        // Le reflet foil se déplace à l'intérieur de la carte via son fond
+        const bgPosX = 50 + (currentRotationY * 1.5);
+        shine.style.backgroundPosition = `${bgPosX}% 50%`;
         shine.style.opacity = Math.min(0.8, 0.4 + Math.abs(currentRotationY) / 30);
     };
 
@@ -234,11 +233,11 @@ function initZoomInteractions() {
         isDragging = false;
 
         container.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-        shine.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
+        shine.style.transition = 'background-position 0.5s ease, opacity 0.5s ease';
 
         container.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)`;
-        shine.style.transform = `translateX(0%)`;
-        shine.style.opacity = '0.5';
+        shine.style.backgroundPosition = `50% 50%`;
+        shine.style.opacity = '0.4';
         
         setTimeout(() => { hasDragged = false; }, 50);
     };
