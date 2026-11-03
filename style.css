@@ -717,6 +717,8 @@ header {
     perspective: 1200px;
     transform-style: preserve-3d;
     user-select: none;
+    border-radius: 12px; /* Arrondi propre du conteneur */
+    overflow: hidden;    /* Empêche tout élément interne de dépasser */
 }
 
 .collector-zoom-card-container:active {
@@ -725,19 +727,21 @@ header {
 
 /* Image de la carte zoomée */
 .collector-zoom-card-container img.card-zoom-img {
+    display: block;
     border-radius: 12px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7);
     pointer-events: none;
+    backface-visibility: hidden; /* Évite les artefacts visuels 3D */
 }
 
-/* Calque de brillance foil dynamique */
+/* Calque de brillance foil dynamique strictement contenu aux dimensions */
 .collector-zoom-foil-shine {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: 12px;
+    border-radius: 12px; /* Même arrondi que la carte */
     pointer-events: none;
     opacity: 0.7;
     background: linear-gradient(135deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%);
