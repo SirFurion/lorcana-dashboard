@@ -726,7 +726,7 @@ header {
     cursor: pointer; /* Indique qu'on peut cliquer pour fermer */
 }
 
-/* Conteneur de la carte zoomée : s'adapte strictement à la taille de l'image */
+/* Conteneur global du zoom */
 .collector-zoom-card-container {
     position: relative;
     display: flex;
@@ -738,19 +738,24 @@ header {
     background: transparent;
 }
 
-/* Image de la carte zoomée */
+/* Image par défaut (cartes verticales / portrait) */
 .collector-zoom-card-container img.card-zoom-img {
     display: block;
     max-height: 80vh;
+    max-width: 80vw;
     width: auto;
     height: auto;
     border-radius: 12px;
     pointer-events: none;
+    transition: transform 0.3s ease;
 }
 
+/* --- ROTATION À 90° POUR LES CARTES LIEUX (LANDSCAPE) --- */
 .collector-zoom-card-container.is-landscape img.card-zoom-img {
-    max-height: none;
-    max-width: 85vw;
+    transform: rotate(90deg);
+    /* Comme l'image est pivotée, on inverse la logique des dimensions max pour qu'elle tienne dans l'écran */
+    max-height: 80vw; 
+    max-width: 80vh;
     width: auto;
     height: auto;
 }
