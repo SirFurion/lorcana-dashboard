@@ -284,10 +284,12 @@ async function fetchCollectorCardImage(setCode, cardNumber, itemElement) {
 
         const data = await response.json();
         const imageUrl = data.image_uris?.digital?.normal || '';
+        const layout = data.layout || 'normal'; // 'landscape' pour les lieux !
 
         if (imageUrl) {
             imgWrapper.innerHTML = `<img src="${imageUrl}" class="missing-card-img" alt="Carte">`;
-            imgWrapper.onclick = () => openCollectorZoom(imageUrl);
+            // On passe un objet à la fonction de zoom
+            imgWrapper.onclick = () => openCollectorZoom({ imageUrl, layout });
         } else {
             imgWrapper.innerHTML = `<span style="font-size: 0.6rem; color: #ff6b6b; display: flex; align-items: center; justify-content: center; height: 100%;">Indisponible</span>`;
             imgWrapper.style.cursor = 'default';
@@ -297,7 +299,6 @@ async function fetchCollectorCardImage(setCode, cardNumber, itemElement) {
         imgWrapper.style.cursor = 'default';
     }
 }
-
 
 // ==========================================
 // SYNCHRONISATION GOOGLE SHEETS & DASHBOARD
