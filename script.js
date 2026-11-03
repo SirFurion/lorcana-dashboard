@@ -167,13 +167,10 @@ function openCollectorZoom(imgUrl) {
     currentRotationY = 0;
     currentRotationX = 0;
 
-    // On utilise une structure gigogne : un overlay, un conteneur 3D, et une boîte interne isolée pour le foil
     zoomOverlay.innerHTML = `
         <div class="collector-zoom-card-container" id="zoom-card-container">
-            <div class="collector-zoom-inner-box">
-                <div class="collector-zoom-foil-shine" id="zoom-foil-shine"></div>
-                <img src="${imgUrl}" class="card-zoom-img" id="zoom-card-img" alt="Zoom Carte">
-            </div>
+            <div class="collector-zoom-foil-shine" id="zoom-foil-shine"></div>
+            <img src="${imgUrl}" class="card-zoom-img" id="zoom-card-img" alt="Zoom Carte">
         </div>
     `;
     
@@ -213,21 +210,21 @@ function initZoomInteractions() {
         if (!isDragging) return;
 
         const currentX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
-        const diffX = currentX - startX; // Négatif à gauche, Positif à droite
+        const diffX = currentX - startX; // Positif vers la droite, Négatif vers la gauche
 
         if (Math.abs(diffX) > 4) {
             hasDragged = true;
         }
 
-        // CORRECTION DE LA ROTATION : On gère parfaitement le signe (gauche/droite)
-        currentRotationY = Math.max(-25, Math.min(25, diffX * 0.35));
-        currentRotationX = -currentRotationY * 0.2;
+        // Rotation 3D bidirectionnelle fluide
+        currentRotationY = Math.max(-30, Math.min(30, diffX * 0.4));
+        currentRotationX = -currentRotationY * 0.25;
 
-        // On applique la rotation 3D et le zoom global
+        // On applique la rotation sur le conteneur
         container.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg) scale(1.08)`;
 
-        // Le foil glisse en douceur de gauche à droite selon l'inclinaison
-        const shineTranslate = currentRotationY * 2;
+        // Le foil glisse selon l'inclinaison
+        const shineTranslate = currentRotationY * 1.5;
         shine.style.transform = `translateX(${shineTranslate}%)`;
         shine.style.opacity = Math.min(0.8, 0.4 + Math.abs(currentRotationY) / 30);
     };
@@ -236,7 +233,6 @@ function initZoomInteractions() {
         if (!isDragging) return;
         isDragging = false;
 
-        // Retour élastique propre
         container.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
         shine.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
 
