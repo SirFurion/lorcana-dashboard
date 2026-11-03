@@ -146,21 +146,34 @@ header {
 
 /* Bouton Ouvrir Cartes Manquantes */
 .missing-action-container {
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* Espace bien propre entre les deux boutons */
     margin-bottom: 25px;
+    flex-wrap: wrap; /* Évite que ça dépasse sur les petits écrans mobiles */
 }
 
-.missing-action-btn {
-    /* Si tes images sont sur GitHub ou dans un dossier local, ajuste le chemin si besoin */
+.missing-action-btn, 
+.collector-action-btn { /* Ajuste le sélecteur si ton second bouton a une autre classe spécifique */
     background-image: url('https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/bouton.png');
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-color: transparent; /* Supprime l'ancien dégradé de fond */
     
+    /* On force une taille identique pour les deux */
+    width: 280px;  /* Ajuste cette valeur selon la largeur idéale souhaitée */
+    height: 70px;  /* Fixe la hauteur pour qu'elle épouse parfaitement ton asset */
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    
     color: var(--gold-light); /* Texte clair pour bien contraster sur l'asset */
     font-family: 'Cinzel', serif;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     padding: 14px 28px; /* Ajuste légèrement le padding selon la hauteur de ton asset */
     border: none; /* Retire la bordure par défaut si ton image intègre déjà un cadre */
     border-radius: 10px;
