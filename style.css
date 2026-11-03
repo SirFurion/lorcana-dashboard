@@ -9,7 +9,11 @@
     --text-muted: #94a3b8;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+}
 
 body {
     background-color: var(--bg-deep);
@@ -723,10 +727,10 @@ header {
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    cursor: pointer; /* Indique qu'on peut cliquer pour fermer */
+    cursor: pointer;
 }
 
-/* Conteneur global du zoom */
+/* Conteneur global du zoom (Portrait par défaut) */
 .collector-zoom-card-container {
     position: relative;
     display: flex;
@@ -750,23 +754,23 @@ header {
     transition: transform 0.3s ease;
 }
 
+/* --- CORRECTION MODE PAYSAGE / LIEUX --- */
 .collector-zoom-card-container.is-landscape {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* On donne la priorité à l'espace horizontal */
-    width: 80vh;
-    height: 80vw;
-    max-width: 90vw;
-    max-height: 85vh;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    background: transparent;
 }
 
-/* --- IMAGE PIVOTÉE ET AJUSTÉE --- */
+/* Image pivotée à 90° et contenue proprement dans la hauteur de l'écran */
 .collector-zoom-card-container.is-landscape img.card-zoom-img {
     transform: rotate(90deg);
-    /* On inverse les limites max pour correspondre à l'orientation réelle après rotation */
-    max-width: 80vh;
-    max-height: 85vw;
+    max-height: 75vw; /* S'adapte à la largeur de l'écran une fois couchée */
+    max-width: 85vh;  /* S'adapte à la hauteur de l'écran */
     width: auto;
     height: auto;
     object-fit: contain;
