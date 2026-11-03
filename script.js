@@ -154,6 +154,7 @@ function closeCollectorModal() {
 }
 
 let isDragging = false;
+let hasDragged = false;
 let startX = 0;
 let currentRotationY = 0;
 let currentRotationX = 0;
@@ -166,12 +167,24 @@ function openCollectorZoom(imgUrl) {
     currentRotationY = 0;
     currentRotationX = 0;
 
+    // Le conteneur global (overlay) ferme le zoom UNIQUEMENT si on clique en dehors de la carte
     zoomOverlay.innerHTML = `
         <div class="collector-zoom-card-container" id="zoom-card-container">
             <div class="collector-zoom-foil-shine" id="zoom-foil-shine"></div>
             <img src="${imgUrl}" class="card-zoom-img" id="zoom-card-img" alt="Zoom Carte">
         </div>
     `;
+    
+    // Clic en dehors de la carte = Fermeture (règle 3)
+    zoomOverlay.onclick = (e) => {
+        // Si on a fait un "drag" (glissé), on ne ferme pas au relâchement du clic en dehors
+        if (hasDragged) {
+            hasDragged = false;
+            return;
+        }
+        closeCollectorZoom();
+    };
+
     zoomOverlay.style.display = 'flex';
     modalBox.classList.add('blurred');
 
@@ -185,78 +198,70 @@ function initZoomInteractions() {
 
     if (!container || !img || !shine) return;
 
-    // Début du clic / toucher
+    // Empêche la propagation du clic sur la carte pour respecter la règle 3bis (ne fait rien / ne ferme pas)
+    const stopProp = (e) => {
+        e.stopPropagation();
+    };
+
     const onStart = (e) => {
+        e.stopPropagation(); // Évite que le clic remonte à l'overlay
         isDragging = true;
+        hasDragged = false;
         startX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+        
         container.style.transition = 'none';
         img.style.transition = 'none';
         shine.style.transition = 'none';
     };
 
-    // Mouvement de la souris / du doigt
     const onMove = (e) => {
         if (!isDragging) return;
 
         const currentX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
         const diffX = currentX - startX;
 
-        // Calcul de la rotation en fonction du déplacement horizontal (limitée entre -25° et +25°)
-        currentRotationY = Math.max(-25, Math.min(25, diffX * 0.4));
-        currentRotationX = -currentRotationY * 0.3; // Légère inclinaison verticale croisée
+        // Si l'utilisateur a bougé la souris de plus de 5 pixels, on considère que c'est un "drag"
+        if (Math.abs(diffX) > 5) {
+            hasDragged = true;
+        }
 
-        // Application de la rotation 3D
+        currentRotationY = Math.max(-25, Math.min(25, diffX * 0.4));
+        currentRotationX = -currentRotationY * 0.3;
+
         img.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg) scale(1.08)`;
         container.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg)`;
 
-        // Le reflet foil suit la position de la souris de manière dynamique
         const shinePercent = 50 + (currentRotationY * 1.5);
         shine.style.background = `linear-gradient(${135 + currentRotationY}deg, transparent 25%, rgba(255, 255, 255, 0.5) ${shinePercent}%, transparent 75%)`;
     };
 
-    // Fin du clic / relâchement
     const onEnd = () => {
         if (!isDragging) return;
         isDragging = false;
 
-        // Effet élastique de retour à la position neutre quand on relâche
+        // Retour élastique à la position neutre
         container.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
         img.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
         shine.style.transition = 'background 0.5s ease';
 
-        img.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)';`;
+        img.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)`;
         container.style.transform = `rotateY(0deg) rotateX(0deg)`;
         shine.style.background = `linear-gradient(135deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%)`;
+        
+        // On remet hasDragged à false un tout petit peu après pour sécuriser le clic simple
+        setTimeout(() => { hasDragged = false; }, 50);
     };
 
-    // Écouteurs d'événements souris
+    // Écouteurs sur le conteneur de la carte
     container.addEventListener('mousedown', onStart);
+    container.addEventListener('click', stopProp); // Règle 3bis : un simple clic sur la carte ne fait rien
+
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onEnd);
 
-    // Écouteurs tactiles (pour mobile/tablette)
     container.addEventListener('touchstart', onStart);
+    container.addEventListener('touchend', onEnd);
     window.addEventListener('touchmove', onMove);
-    window.addEventListener('touchend', onEnd);
-}
-
-function rotateCollectorZoom(event) {
-    // Empêche la fermeture de la modale si on clique sur la carte
-    event.stopPropagation();
-    
-    currentRotation = (currentRotation + 15) % 45; 
-    if (currentRotation > 30) currentRotation = -15; // Cycle de -15° à +30° pour donner un effet naturel de va-et-vient
-
-    const img = document.getElementById('zoom-card-img');
-    const shine = document.getElementById('zoom-foil-shine');
-
-    if (img && shine) {
-        img.style.transform = `rotate(${currentRotation}deg) scale(1.05)`;
-        // Le reflet foil se décale en sens inverse ou suit l'inclinaison pour simuler la lumière
-        const shineOffset = 50 + (currentRotation * 2);
-        shine.style.background = `linear-gradient(${135 + currentRotation}deg, transparent 30%, rgba(255, 255, 255, 0.4) ${shineOffset}%, transparent 70%)`;
-        shine.style.opacity = '1';
-    }
 }
 
 function closeCollectorZoom() {
