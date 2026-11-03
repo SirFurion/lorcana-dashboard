@@ -28,8 +28,11 @@
 
         <!-- Bouton d'accès aux cartes manquantes -->
         <div class="missing-action-container">
-            <button onclick="openMissingModal()" class="missing-action-btn">
+           <button onclick="openMissingModal()" class="missing-action-btn">
                 🔍 Voir mes cartes manquantes
+            </button>
+            <button onclick="openCollectorModal()" class="missing-action-btn" style="background: linear-gradient(135deg, #b8860b, #ffd700);">
+                ✨ Mes plus belles cartes
             </button>
         </div>
 
@@ -47,6 +50,16 @@
             <div id="card-zoom-overlay" class="card-zoom-overlay" onclick="closeCardZoom()">
                 <img id="card-zoom-img" class="card-zoom-img" alt="Zoom Carte">
             </div>
+        </div>
+
+        <!-- Pop-up Modale pour les Belles Cartes (Vitrine) -->
+        <div id="collector-modal" class="modal-overlay">
+            <div id="collector-box-container" class="modal-box">
+                <button onclick="closeCollectorModal()" class="modal-close-btn">✕</button>
+                <div class="section-title" style="margin-bottom: 0;">Mes Plus Belles Cartes</div>
+                <div id="collector-modal-content" class="modal-content-scroll"></div>
+            </div>
+            <div id="collector-zoom-overlay" class="card-zoom-overlay" onclick="closeCollectorZoom()"></div>
         </div>
 
         <!-- Années et Chapitres -->
