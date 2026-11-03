@@ -708,7 +708,6 @@ header {
 }
 
 /* Conteneur interactif 3D de la carte zoomée */
-/* Conteneur interactif 3D de la carte zoomée */
 .collector-zoom-card-container {
     position: relative;
     display: inline-block; /* S'ajuste exactement à la taille de l'image qu'il contient */
