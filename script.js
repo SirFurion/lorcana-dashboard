@@ -200,7 +200,6 @@ function initZoomInteractions() {
         e.stopPropagation();
         isDragging = true;
         hasDragged = false;
-        // On récupère précisément la position de départ de la souris ou du doigt
         startX = e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : 0);
         
         container.style.transition = 'none';
@@ -217,14 +216,14 @@ function initZoomInteractions() {
             hasDragged = true;
         }
 
-        // LA ROTATION DU DÉBUT : direct et proportionnel au déplacement par rapport au clic initial
+        // CORRECTION DE LA DIRECTION : On utilise directement diffX pour que gauche/droite pivotent dans le bon sens
         currentRotationY = Math.max(-25, Math.min(25, diffX * 0.4));
         currentRotationX = -currentRotationY * 0.3;
 
-        // On applique la rotation 3D et le zoom sur le conteneur unique
+        // Application de la transformation 3D
         container.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg) scale(1.08)`;
 
-        // Le foil réagit en douceur à l'intérieur
+        // Le foil réagit à l'intérieur
         const bgPosX = 50 + (currentRotationY * 1.5);
         shine.style.backgroundPosition = `${bgPosX}% 50%`;
         shine.style.opacity = Math.min(0.8, 0.4 + Math.abs(currentRotationY) / 30);
@@ -234,7 +233,6 @@ function initZoomInteractions() {
         if (!isDragging) return;
         isDragging = false;
 
-        // Retour élastique fluide
         container.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
         shine.style.transition = 'background-position 0.5s ease, opacity 0.5s ease';
 
@@ -263,7 +261,6 @@ function closeCollectorZoom() {
     zoomOverlay.style.display = 'none';
     modalBox.classList.remove('blurred');
 }
-
 async function renderCollectorModal() {
     const container = document.getElementById('collector-modal-content');
     
