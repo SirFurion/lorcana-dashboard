@@ -162,22 +162,19 @@ let currentRotationX = 0;
 function openCollectorZoom(imgUrl) {
     if (!imgUrl) return;
     const zoomOverlay = document.getElementById('collector-zoom-overlay');
-    const modalBox = document.getElementById('collector-box-container');
+    const modalBox = document.getElementById('modal-box-container');
 
     currentRotationY = 0;
     currentRotationX = 0;
 
-    // Le conteneur global (overlay) ferme le zoom UNIQUEMENT si on clique en dehors de la carte
+    // On intègre le foil directement dans la structure de l'image zoomée
     zoomOverlay.innerHTML = `
         <div class="collector-zoom-card-container" id="zoom-card-container">
-            <div class="collector-zoom-foil-shine" id="zoom-foil-shine"></div>
             <img src="${imgUrl}" class="card-zoom-img" id="zoom-card-img" alt="Zoom Carte">
         </div>
     `;
     
-    // Clic en dehors de la carte = Fermeture (règle 3)
     zoomOverlay.onclick = (e) => {
-        // Si on a fait un "drag" (glissé), on ne ferme pas au relâchement du clic en dehors
         if (hasDragged) {
             hasDragged = false;
             return;
@@ -194,24 +191,19 @@ function openCollectorZoom(imgUrl) {
 function initZoomInteractions() {
     const container = document.getElementById('zoom-card-container');
     const img = document.getElementById('zoom-card-img');
-    const shine = document.getElementById('zoom-foil-shine');
 
-    if (!container || !img || !shine) return;
+    if (!container || !img) return;
 
-    // Empêche la propagation du clic sur la carte pour respecter la règle 3bis (ne fait rien / ne ferme pas)
-    const stopProp = (e) => {
-        e.stopPropagation();
-    };
+    const stopProp = (e) => { e.stopPropagation(); };
 
     const onStart = (e) => {
-        e.stopPropagation(); // Évite que le clic remonte à l'overlay
+        e.stopPropagation();
         isDragging = true;
         hasDragged = false;
         startX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
         
         container.style.transition = 'none';
         img.style.transition = 'none';
-        shine.style.transition = 'none';
     };
 
     const onMove = (e) => {
@@ -220,41 +212,38 @@ function initZoomInteractions() {
         const currentX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
         const diffX = currentX - startX;
 
-        // Si l'utilisateur a bougé la souris de plus de 5 pixels, on considère que c'est un "drag"
         if (Math.abs(diffX) > 5) {
             hasDragged = true;
         }
 
-        currentRotationY = Math.max(-25, Math.min(25, diffX * 0.4));
-        currentRotationX = -currentRotationY * 0.3;
+        // Ajustement de l'angle de rotation pour qu'il soit fluide et naturel
+        currentRotationY = Math.max(-30, Math.min(30, diffX * 0.35));
+        currentRotationX = -currentRotationY * 0.25;
 
-        img.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg) scale(1.08)`;
-        container.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg)`;
+        // On applique la rotation 3D et le zoom sur le conteneur global pour que tout bouge d'un seul bloc
+        container.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg) scale(1.08)`;
 
-        const shinePercent = 50 + (currentRotationY * 1.5);
-        shine.style.background = `linear-gradient(${135 + currentRotationY}deg, transparent 25%, rgba(255, 255, 255, 0.5) ${shinePercent}%, transparent 75%)`;
+        // Le dégradé du foil (background de l'image) s'incline en même temps que la souris
+        const lightPos = 50 + (currentRotationY * 1.5);
+        img.style.backgroundImage = `linear-gradient(${135 + currentRotationY}deg, transparent 30%, rgba(255, 255, 255, 0.45) ${lightPos}%, transparent 70%)`;
     };
 
     const onEnd = () => {
         if (!isDragging) return;
         isDragging = false;
 
-        // Retour élastique à la position neutre
+        // Retour élastique fluide
         container.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-        img.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-        shine.style.transition = 'background 0.5s ease';
+        img.style.transition = 'background 0.5s ease';
 
-        img.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)`;
-        container.style.transform = `rotateY(0deg) rotateX(0deg)`;
-        shine.style.background = `linear-gradient(135deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%)`;
+        container.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)`;
+        img.style.backgroundImage = `linear-gradient(135deg, transparent 40%, rgba(255, 215, 0, 0.25) 50%, transparent 60%)`;
         
-        // On remet hasDragged à false un tout petit peu après pour sécuriser le clic simple
         setTimeout(() => { hasDragged = false; }, 50);
     };
 
-    // Écouteurs sur le conteneur de la carte
     container.addEventListener('mousedown', onStart);
-    container.addEventListener('click', stopProp); // Règle 3bis : un simple clic sur la carte ne fait rien
+    container.addEventListener('click', stopProp);
 
     window.addEventListener('mousemove', onMove);
     window.addEventListener('mouseup', onEnd);
@@ -266,7 +255,7 @@ function initZoomInteractions() {
 
 function closeCollectorZoom() {
     const zoomOverlay = document.getElementById('collector-zoom-overlay');
-    const modalBox = document.getElementById('collector-box-container');
+    const modalBox = document.getElementById('modal-box-container');
 
     zoomOverlay.style.display = 'none';
     modalBox.classList.remove('blurred');
