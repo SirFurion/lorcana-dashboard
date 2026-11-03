@@ -207,7 +207,7 @@ async function renderCollectorModal() {
     container.appendChild(summaryBanner);
 
     // 3. Ordre d'affichage (du plus rare / haut niveau au plus bas : 8, 7, 6)
-    [8, 7, 6].forEach(rarityLevel => {
+    [6, 7, 8].forEach(rarityLevel => {
         const cards = groupedByRarity[rarityLevel];
         if (!cards || cards.length === 0) return; // Omis si vide
 
