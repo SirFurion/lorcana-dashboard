@@ -175,15 +175,6 @@ function openCollectorZoom(cardData) {
     zoomOverlay.style.display = 'flex';
     modalBox.classList.add('blurred');
 }
-    
-    // Un clic n'importe où sur l'overlay ou la carte ferme le zoom
-    zoomOverlay.onclick = () => {
-        closeCollectorZoom();
-    };
-
-    zoomOverlay.style.display = 'flex';
-    modalBox.classList.add('blurred');
-}
 
 function closeCollectorZoom() {
     const zoomOverlay = document.getElementById('collector-zoom-overlay');
