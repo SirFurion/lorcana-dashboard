@@ -153,23 +153,91 @@ function closeCollectorModal() {
     document.getElementById('collector-modal').style.display = 'none';
 }
 
-let currentRotation = 0;
+let isDragging = false;
+let startX = 0;
+let currentRotationY = 0;
+let currentRotationX = 0;
 
 function openCollectorZoom(imgUrl) {
     if (!imgUrl) return;
     const zoomOverlay = document.getElementById('collector-zoom-overlay');
     const modalBox = document.getElementById('collector-box-container');
 
-    currentRotation = 0; // Réinitialisation de la rotation à l'ouverture
+    currentRotationY = 0;
+    currentRotationX = 0;
 
     zoomOverlay.innerHTML = `
-        <div class="collector-zoom-card-container" onclick="rotateCollectorZoom(event)">
+        <div class="collector-zoom-card-container" id="zoom-card-container">
             <div class="collector-zoom-foil-shine" id="zoom-foil-shine"></div>
             <img src="${imgUrl}" class="card-zoom-img" id="zoom-card-img" alt="Zoom Carte">
         </div>
     `;
     zoomOverlay.style.display = 'flex';
     modalBox.classList.add('blurred');
+
+    initZoomInteractions();
+}
+
+function initZoomInteractions() {
+    const container = document.getElementById('zoom-card-container');
+    const img = document.getElementById('zoom-card-img');
+    const shine = document.getElementById('zoom-foil-shine');
+
+    if (!container || !img || !shine) return;
+
+    // Début du clic / toucher
+    const onStart = (e) => {
+        isDragging = true;
+        startX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+        container.style.transition = 'none';
+        img.style.transition = 'none';
+        shine.style.transition = 'none';
+    };
+
+    // Mouvement de la souris / du doigt
+    const onMove = (e) => {
+        if (!isDragging) return;
+
+        const currentX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
+        const diffX = currentX - startX;
+
+        // Calcul de la rotation en fonction du déplacement horizontal (limitée entre -25° et +25°)
+        currentRotationY = Math.max(-25, Math.min(25, diffX * 0.4));
+        currentRotationX = -currentRotationY * 0.3; // Légère inclinaison verticale croisée
+
+        // Application de la rotation 3D
+        img.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg) scale(1.08)`;
+        container.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg)`;
+
+        // Le reflet foil suit la position de la souris de manière dynamique
+        const shinePercent = 50 + (currentRotationY * 1.5);
+        shine.style.background = `linear-gradient(${135 + currentRotationY}deg, transparent 25%, rgba(255, 255, 255, 0.5) ${shinePercent}%, transparent 75%)`;
+    };
+
+    // Fin du clic / relâchement
+    const onEnd = () => {
+        if (!isDragging) return;
+        isDragging = false;
+
+        // Effet élastique de retour à la position neutre quand on relâche
+        container.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+        img.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+        shine.style.transition = 'background 0.5s ease';
+
+        img.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)';`;
+        container.style.transform = `rotateY(0deg) rotateX(0deg)`;
+        shine.style.background = `linear-gradient(135deg, transparent 40%, rgba(255, 215, 0, 0.3) 50%, transparent 60%)`;
+    };
+
+    // Écouteurs d'événements souris
+    container.addEventListener('mousedown', onStart);
+    window.addEventListener('mousemove', onMove);
+    window.addEventListener('mouseup', onEnd);
+
+    // Écouteurs tactiles (pour mobile/tablette)
+    container.addEventListener('touchstart', onStart);
+    window.addEventListener('touchmove', onMove);
+    window.addEventListener('touchend', onEnd);
 }
 
 function rotateCollectorZoom(event) {
