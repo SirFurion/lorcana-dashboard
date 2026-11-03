@@ -711,7 +711,7 @@ header {
     transform: rotate(35deg) translateY(100%);
 }
 
-/* Conteneur interactif 3D de la carte zoomée */
+/* Conteneur 3D global */
 .collector-zoom-card-container {
     position: relative;
     display: inline-block;
@@ -719,14 +719,20 @@ header {
     perspective: 1200px;
     transform-style: preserve-3d;
     user-select: none;
-    border-radius: 12px;
-    overflow: hidden; /* Empêche strictement le foil de dépasser des bords */
     transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
 }
 
 .collector-zoom-card-container:active {
     cursor: grabbing;
+}
+
+/* Boîte interne isolée : c'est elle qui cadre l'image et bloque le foil à l'intérieur */
+.collector-zoom-inner-box {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden; /* Empêche absolument tout débordement à droite/gauche */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8);
+    background: #000;
 }
 
 /* Image de la carte zoomée */
@@ -739,7 +745,7 @@ header {
     backface-visibility: hidden;
 }
 
-/* Calque de brillance foil dynamique et indépendant */
+/* Calque de brillance foil confiné dans la boîte interne */
 .collector-zoom-foil-shine {
     position: absolute;
     top: -50%;
@@ -751,9 +757,9 @@ header {
     background: linear-gradient(
         135deg,
         transparent 35%,
-        rgba(255, 255, 255, 0.2) 45%,
-        rgba(255, 215, 0, 0.4) 50%,
-        rgba(255, 255, 255, 0.2) 55%,
+        rgba(255, 255, 255, 0.25) 45%,
+        rgba(255, 215, 0, 0.45) 50%,
+        rgba(255, 255, 255, 0.25) 55%,
         transparent 65%
     );
     mix-blend-mode: overlay;
