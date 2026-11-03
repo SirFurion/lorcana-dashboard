@@ -153,105 +153,24 @@ function closeCollectorModal() {
     document.getElementById('collector-modal').style.display = 'none';
 }
 
-let isDragging = false;
-let hasDragged = false;
-let startX = 0;
-let currentRotationY = 0;
-let currentRotationX = 0;
-
 function openCollectorZoom(imgUrl) {
     if (!imgUrl) return;
     const zoomOverlay = document.getElementById('collector-zoom-overlay');
     const modalBox = document.getElementById('modal-box-container');
 
-    currentRotationY = 0;
-    currentRotationX = 0;
-
     zoomOverlay.innerHTML = `
         <div class="collector-zoom-card-container" id="zoom-card-container">
-            <div class="collector-zoom-foil-shine" id="zoom-foil-shine"></div>
-            <img src="${imgUrl}" class="card-zoom-img" id="zoom-card-img" alt="Zoom Carte">
+            <img src="${imgUrl}" class="card-zoom-img" alt="Zoom Carte">
         </div>
     `;
     
-    zoomOverlay.onclick = (e) => {
-        if (hasDragged) {
-            hasDragged = false;
-            return;
-        }
+    // Un clic n'importe où sur l'overlay ou la carte ferme le zoom
+    zoomOverlay.onclick = () => {
         closeCollectorZoom();
     };
 
     zoomOverlay.style.display = 'flex';
     modalBox.classList.add('blurred');
-
-    initZoomInteractions();
-}
-
-function initZoomInteractions() {
-    const container = document.getElementById('zoom-card-container');
-    const shine = document.getElementById('zoom-foil-shine');
-
-    if (!container || !shine) return;
-
-    const stopProp = (e) => { e.stopPropagation(); };
-
-    const onStart = (e) => {
-        e.stopPropagation();
-        isDragging = true;
-        hasDragged = false;
-        startX = e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : 0);
-        
-        container.style.transition = 'none';
-        shine.style.transition = 'none';
-    };
-
-    const onMove = (e) => {
-        if (!isDragging) return;
-
-        const currentX = e.clientX !== undefined ? e.clientX : (e.touches ? e.touches[0].clientX : 0);
-        const diffX = currentX - startX; // Négatif à gauche, Positif à droite
-
-        if (Math.abs(diffX) > 4) {
-            hasDragged = true;
-        }
-
-        // CORRECTION DE LA DIRECTION : On utilise directement diffX pour que gauche/droite pivotent dans le bon sens
-        currentRotationY = Math.max(-25, Math.min(25, diffX * 0.4));
-        currentRotationX = -currentRotationY * 0.3;
-
-        // Application de la transformation 3D
-        container.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg) scale(1.08)`;
-
-        // Le foil réagit à l'intérieur
-        const bgPosX = 50 + (currentRotationY * 1.5);
-        shine.style.backgroundPosition = `${bgPosX}% 50%`;
-        shine.style.opacity = Math.min(0.8, 0.4 + Math.abs(currentRotationY) / 30);
-    };
-
-    const onEnd = () => {
-        if (!isDragging) return;
-        isDragging = false;
-
-        container.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-        shine.style.transition = 'background-position 0.5s ease, opacity 0.5s ease';
-
-        container.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)`;
-        shine.style.backgroundPosition = `50% 50%`;
-        shine.style.opacity = '0.4';
-        
-        setTimeout(() => { hasDragged = false; }, 50);
-    };
-
-    container.addEventListener('mousedown', onStart);
-    container.addEventListener('click', stopProp);
-
-    window.addEventListener('mousemove', onMove);
-    window.addEventListener('mouseup', onEnd);
-
-    container.addEventListener('touchstart', onStart);
-    container.addEventListener('touchend', onEnd);
-    window.addEventListener('touchmove', onMove);
 }
 
 function closeCollectorZoom() {
@@ -261,6 +180,7 @@ function closeCollectorZoom() {
     zoomOverlay.style.display = 'none';
     modalBox.classList.remove('blurred');
 }
+
 async function renderCollectorModal() {
     const container = document.getElementById('collector-modal-content');
     
