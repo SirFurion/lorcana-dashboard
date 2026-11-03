@@ -668,3 +668,42 @@ header {
     color: var(--text-muted);
     margin-top: 15px;
 }
+
+/* Effet Foil / Brillant pour la vitrine */
+.missing-card-item img.missing-card-img {
+    transition: transform 0.3s ease;
+    border-radius: 4px;
+}
+
+.missing-card-item:hover img.missing-card-img {
+    transform: scale(1.03);
+}
+
+/* Conteneur avec effet foil au survol */
+.missing-card-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.missing-card-item::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 45%,
+        rgba(255, 215, 0, 0.2) 50%,
+        rgba(255, 255, 255, 0.4) 53%,
+        transparent 58%
+    );
+    transform: rotate(35deg) translateY(-100%);
+    transition: transform 0.6s ease;
+    pointer-events: none;
+}
+
+.missing-card-item:hover::after {
+    transform: rotate(35deg) translateY(100%);
+}
