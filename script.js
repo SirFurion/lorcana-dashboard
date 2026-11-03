@@ -13,9 +13,12 @@ const rarityIcons = {
 
 let chaptersData = {};
 let missingCardsList = [];
+let collectorCardsList = [];
 let selectedKey = null;
 
-// Gestion de la modale
+// ==========================================
+// GESTION DE LA MODALE : CARTES MANQUANTES (avec prix)
+// ==========================================
 function openMissingModal() {
     document.getElementById('missing-modal').style.display = 'flex';
     renderMissingCardsModal();
@@ -26,20 +29,17 @@ function closeMissingModal() {
     document.getElementById('missing-modal').style.display = 'none';
 }
 
-// Fonctions de Zoom sur une carte avec son prix
 function openCardZoom(imgUrl, cardPrice) {
     if (!imgUrl) return;
     const zoomOverlay = document.getElementById('card-zoom-overlay');
     const modalBox = document.getElementById('modal-box-container');
 
-    // On s'assure d'avoir un conteneur propre pour l'image zoomée et sa pastille de prix
     zoomOverlay.innerHTML = `
         <div style="position: relative; display: inline-flex; justify-content: center; align-items: center;">
             <img src="${imgUrl}" class="card-zoom-img" alt="Zoom Carte">
             ${cardPrice ? `<div class="card-zoom-price-badge">${cardPrice}</div>` : ''}
         </div>
     `;
-
     zoomOverlay.style.display = 'flex';
     modalBox.classList.add('blurred');
 }
@@ -52,7 +52,6 @@ function closeCardZoom() {
     modalBox.classList.remove('blurred');
 }
 
-// Affichage, regroupement et calcul des totaux par chapitre dans la modale
 async function renderMissingCardsModal() {
     const container = document.getElementById('missing-modal-content');
     
@@ -63,16 +62,12 @@ async function renderMissingCardsModal() {
 
     let totalMissingPrice = 0;
     missingCardsList.forEach(card => {
-        if (card.price && !isNaN(card.price)) {
-            totalMissingPrice += card.price;
-        }
+        if (card.price && !isNaN(card.price)) totalMissingPrice += card.price;
     });
 
     const grouped = {};
     missingCardsList.forEach(card => {
-        if (!grouped[card.chapter]) {
-            grouped[card.chapter] = [];
-        }
+        if (!grouped[card.chapter]) grouped[card.chapter] = [];
         grouped[card.chapter].push(card);
     });
 
@@ -108,7 +103,6 @@ async function renderMissingCardsModal() {
             const formattedPrice = (card.price && card.price > 0) ? `${card.price.toFixed(2).replace('.', ',')} €` : '';
             const priceSubText = formattedPrice ? `<div class="card-price-sub">${formattedPrice}</div>` : `<div class="card-price-sub" style="color: var(--text-muted); font-style: italic;">Prix N/C</div>`;
 
-            // On passe le prix formaté pour qu'il s'affiche dans le zoom de la carte
             cardItem.innerHTML = `
                 <div class="missing-card-img-wrapper" style="position: relative; display: flex; align-items: center; justify-content: center;">
                     <span style="font-size: 0.6rem; color: var(--text-muted);">...</span>
@@ -123,7 +117,6 @@ async function renderMissingCardsModal() {
     }
 }
 
-// Appel API Lorcast et configuration du clic pour le zoom (sans pastille sur la grille)
 async function fetchCardImage(setCode, cardNumber, itemElement, formattedPrice) {
     const imgWrapper = itemElement.querySelector('.missing-card-img-wrapper');
     try {
@@ -135,7 +128,6 @@ async function fetchCardImage(setCode, cardNumber, itemElement, formattedPrice) 
 
         if (imageUrl) {
             imgWrapper.innerHTML = `<img src="${imageUrl}" class="missing-card-img" alt="Carte">`;
-            // Clic pour zoomer en transmettant le prix
             imgWrapper.onclick = () => openCardZoom(imageUrl, formattedPrice);
         } else {
             imgWrapper.innerHTML = `<span style="font-size: 0.6rem; color: #ff6b6b; display: flex; align-items: center; justify-content: center; height: 100%;">Indisponible</span>`;
@@ -147,6 +139,118 @@ async function fetchCardImage(setCode, cardNumber, itemElement, formattedPrice) 
     }
 }
 
+
+// ==========================================
+// GESTION DE LA MODALE : MES PLUS BELLES CARTES (sans prix)
+// ==========================================
+function openCollectorModal() {
+    document.getElementById('collector-modal').style.display = 'flex';
+    renderCollectorModal();
+}
+
+function closeCollectorModal() {
+    closeCollectorZoom();
+    document.getElementById('collector-modal').style.display = 'none';
+}
+
+function openCollectorZoom(imgUrl) {
+    if (!imgUrl) return;
+    const zoomOverlay = document.getElementById('collector-zoom-overlay');
+    const modalBox = document.getElementById('collector-box-container');
+
+    zoomOverlay.innerHTML = `
+        <div style="position: relative; display: inline-flex; justify-content: center; align-items: center;">
+            <img src="${imgUrl}" class="card-zoom-img" alt="Zoom Carte">
+        </div>
+    `;
+    zoomOverlay.style.display = 'flex';
+    modalBox.classList.add('blurred');
+}
+
+function closeCollectorZoom() {
+    const zoomOverlay = document.getElementById('collector-zoom-overlay');
+    const modalBox = document.getElementById('collector-box-container');
+
+    zoomOverlay.style.display = 'none';
+    modalBox.classList.remove('blurred');
+}
+
+async function renderCollectorModal() {
+    const container = document.getElementById('collector-modal-content');
+    
+    if (!collectorCardsList || collectorCardsList.length === 0) {
+        container.innerHTML = `<span style="color: var(--text-muted); font-style: italic; font-size: 0.85rem; text-align: center; display: block; padding: 20px;">Aucune belle carte trouvée. Pense à exécuter le script dans Google Sheets !</span>`;
+        return;
+    }
+
+    const grouped = {};
+    collectorCardsList.forEach(card => {
+        if (!grouped[card.chapter]) grouped[card.chapter] = [];
+        grouped[card.chapter].push(card);
+    });
+
+    container.innerHTML = '';
+
+    const summaryBanner = document.createElement('div');
+    summaryBanner.style.cssText = "background: rgba(243, 206, 120, 0.1); border: 1px solid var(--gold); border-radius: 8px; padding: 10px; text-align: center; font-family: 'Cinzel', serif; color: var(--gold-light); font-size: 0.85rem; margin-bottom: 5px;";
+    summaryBanner.innerHTML = `Vitrine de la collection : <strong style="color: var(--gold);">${collectorCardsList.length} carte${collectorCardsList.length > 1 ? 's' : ''} d'exception</strong>`;
+    container.appendChild(summaryBanner);
+
+    for (const [chapName, cards] of Object.entries(grouped)) {
+        const section = document.createElement('div');
+        section.className = 'missing-chapter-section';
+
+        section.innerHTML = `
+            <div class="missing-chapter-title">${chapName} (${cards.length} carte${cards.length > 1 ? 's' : ''})</div>
+            <div class="missing-cards-grid" id="collector-grid-${CSS.escape(chapName)}"></div>
+        `;
+        container.appendChild(section);
+
+        const grid = section.querySelector('.missing-cards-grid');
+
+        cards.forEach(card => {
+            const cardItem = document.createElement('div');
+            cardItem.className = 'missing-card-item';
+
+            cardItem.innerHTML = `
+                <div class="missing-card-img-wrapper" style="position: relative; display: flex; align-items: center; justify-content: center;">
+                    <span style="font-size: 0.6rem; color: var(--text-muted);">...</span>
+                </div>
+                <div class="missing-card-name" title="${card.name}">${card.name}</div>
+            `;
+            grid.appendChild(cardItem);
+
+            fetchCollectorCardImage(card.setCode, card.cardNumber, cardItem);
+        });
+    }
+}
+
+async function fetchCollectorCardImage(setCode, cardNumber, itemElement) {
+    const imgWrapper = itemElement.querySelector('.missing-card-img-wrapper');
+    try {
+        const response = await fetch(`https://api.lorcast.com/v0/cards/${setCode}/${cardNumber}`, { mode: 'cors' });
+        if (!response.ok) throw new Error();
+
+        const data = await response.json();
+        const imageUrl = data.image_uris?.digital?.normal || '';
+
+        if (imageUrl) {
+            imgWrapper.innerHTML = `<img src="${imageUrl}" class="missing-card-img" alt="Carte">`;
+            imgWrapper.onclick = () => openCollectorZoom(imageUrl);
+        } else {
+            imgWrapper.innerHTML = `<span style="font-size: 0.6rem; color: #ff6b6b; display: flex; align-items: center; justify-content: center; height: 100%;">Indisponible</span>`;
+            imgWrapper.style.cursor = 'default';
+        }
+    } catch (err) {
+        imgWrapper.innerHTML = `<span style="font-size: 0.6rem; color: #ff6b6b; display: flex; align-items: center; justify-content: center; height: 100%;">Erreur API</span>`;
+        imgWrapper.style.cursor = 'default';
+    }
+}
+
+
+// ==========================================
+// SYNCHRONISATION GOOGLE SHEETS & DASHBOARD
+// ==========================================
 async function fetchSheetData() {
     try {
         const response = await fetch(SCRIPT_URL, { mode: 'cors' });
@@ -154,6 +258,7 @@ async function fetchSheetData() {
         
         chaptersData = data.chaptersData;
         missingCardsList = data.missingCards || [];
+        collectorCardsList = data.collectorCards || [];
         
         const globalOwned = data.global.owned;
         const globalMax = data.global.max;
@@ -262,7 +367,6 @@ function renderRarities() {
                             computedGlobalRarities[rName] = { owned: 0, total: 0 };
                         }
                         computedGlobalRarities[rName].owned += owned;
-                        computedGlobalRopraritiesTotal = computedGlobalRarities[rName].total + total;
                         computedGlobalRarities[rName].total += total;
                     }
                 });
