@@ -153,16 +153,28 @@ function closeCollectorModal() {
     document.getElementById('collector-modal').style.display = 'none';
 }
 
-function openCollectorZoom(imgUrl) {
-    if (!imgUrl) return;
+function openCollectorZoom(cardData) {
+    // cardData peut être l'objet complet de la carte ou tu récupères l'URL et le layout
+    if (!cardData || !cardData.image_url) return;
+    
     const zoomOverlay = document.getElementById('collector-zoom-overlay');
     const modalBox = document.getElementById('modal-box-container');
 
+    const isLandscape = cardData.layout === 'landscape';
+
     zoomOverlay.innerHTML = `
-        <div class="collector-zoom-card-container" id="zoom-card-container">
-            <img src="${imgUrl}" class="card-zoom-img" alt="Zoom Carte">
+        <div class="collector-zoom-card-container ${isLandscape ? 'is-landscape' : ''}" id="zoom-card-container">
+            <img src="${cardData.image_url}" class="card-zoom-img" alt="Zoom Carte">
         </div>
     `;
+    
+    zoomOverlay.onclick = () => {
+        closeCollectorZoom();
+    };
+
+    zoomOverlay.style.display = 'flex';
+    modalBox.classList.add('blurred');
+}
     
     // Un clic n'importe où sur l'overlay ou la carte ferme le zoom
     zoomOverlay.onclick = () => {
