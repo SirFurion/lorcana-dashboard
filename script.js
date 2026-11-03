@@ -167,9 +167,10 @@ function openCollectorZoom(imgUrl) {
     currentRotationY = 0;
     currentRotationX = 0;
 
-    // On intègre le foil directement dans la structure de l'image zoomée
+    // On remet un calque foil propre qui vit à l'intérieur du conteneur de la carte
     zoomOverlay.innerHTML = `
         <div class="collector-zoom-card-container" id="zoom-card-container">
+            <div class="collector-zoom-foil-shine" id="zoom-foil-shine"></div>
             <img src="${imgUrl}" class="card-zoom-img" id="zoom-card-img" alt="Zoom Carte">
         </div>
     `;
@@ -190,9 +191,9 @@ function openCollectorZoom(imgUrl) {
 
 function initZoomInteractions() {
     const container = document.getElementById('zoom-card-container');
-    const img = document.getElementById('zoom-card-img');
+    const shine = document.getElementById('zoom-foil-shine');
 
-    if (!container || !img) return;
+    if (!container || !shine) return;
 
     const stopProp = (e) => { e.stopPropagation(); };
 
@@ -203,7 +204,7 @@ function initZoomInteractions() {
         startX = e.clientX || (e.touches ? e.touches[0].clientX : 0);
         
         container.style.transition = 'none';
-        img.style.transition = 'none';
+        shine.style.transition = 'none';
     };
 
     const onMove = (e) => {
@@ -216,28 +217,30 @@ function initZoomInteractions() {
             hasDragged = true;
         }
 
-        // Ajustement de l'angle de rotation pour qu'il soit fluide et naturel
-        currentRotationY = Math.max(-30, Math.min(30, diffX * 0.35));
+        // CORRECTION : On autorise les valeurs négatives (vers la gauche) et positives (vers la droite)
+        currentRotationY = Math.max(-30, Math.min(30, diffX * 0.4));
         currentRotationX = -currentRotationY * 0.25;
 
-        // On applique la rotation 3D et le zoom sur le conteneur global pour que tout bouge d'un seul bloc
+        // Rotation 3D globale du conteneur
         container.style.transform = `rotateY(${currentRotationY}deg) rotateX(${currentRotationX}deg) scale(1.08)`;
 
-        // Le dégradé du foil (background de l'image) s'incline en même temps que la souris
-        const lightPos = 50 + (currentRotationY * 1.5);
-        img.style.backgroundImage = `linear-gradient(${135 + currentRotationY}deg, transparent 30%, rgba(255, 255, 255, 0.45) ${lightPos}%, transparent 70%)`;
+        // Le reflet foil se déplace dynamiquement selon que l'on va à gauche ou à droite
+        const shineTranslate = currentRotationY * 1.5;
+        shine.style.transform = `translateX(${shineTranslate}%)`;
+        shine.style.opacity = Math.min(0.9, 0.4 + Math.abs(currentRotationY) / 30);
     };
 
     const onEnd = () => {
         if (!isDragging) return;
         isDragging = false;
 
-        // Retour élastique fluide
+        // Retour élastique fluide au centre
         container.style.transition = 'transform 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
-        img.style.transition = 'background 0.5s ease';
+        shine.style.transition = 'transform 0.5s ease, opacity 0.5s ease';
 
         container.style.transform = `rotateY(0deg) rotateX(0deg) scale(1)`;
-        img.style.backgroundImage = `linear-gradient(135deg, transparent 40%, rgba(255, 215, 0, 0.25) 50%, transparent 60%)`;
+        shine.style.transform = `translateX(0%)`;
+        shine.style.opacity = '0.5';
         
         setTimeout(() => { hasDragged = false; }, 50);
     };
