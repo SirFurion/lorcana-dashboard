@@ -729,7 +729,7 @@ header {
 /* Conteneur de la carte zoomée : s'adapte strictement à la taille de l'image */
 .collector-zoom-card-container {
     position: relative;
-    display: flex; /* Force le conteneur à adopter exactement les dimensions de son contenu */
+    display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 12px;
@@ -743,14 +743,14 @@ header {
     display: block;
     max-height: 80vh;
     width: auto;
-    height: auto; /* Garantit un ratio parfait sans espace vide */
+    height: auto;
     border-radius: 12px;
     pointer-events: none;
 }
 
 .collector-zoom-card-container.is-landscape img.card-zoom-img {
     max-height: none;
-    max-width: 85vw; /* S'adapte à la largeur de l'écran en paysage */
+    max-width: 85vw;
     width: auto;
     height: auto;
 }
