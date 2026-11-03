@@ -747,3 +747,10 @@ header {
     border-radius: 12px;
     pointer-events: none;
 }
+
+.collector-zoom-card-container.is-landscape img.card-zoom-img {
+    max-height: none;
+    max-width: 85vw; /* S'adapte à la largeur de l'écran en paysage */
+    width: auto;
+    height: auto;
+}
