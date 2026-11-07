@@ -98,7 +98,13 @@ async function renderMissingCardsModal() {
 
         cards.forEach(card => {
             const cardItem = document.createElement('div');
-            cardItem.className = 'missing-card-item';
+            
+            // --- AJOUT : Vérification de la rareté (>= 6) ---
+            const rarityLevel = parseInt(card.rarity) || 0;
+            const isFoilEffect = rarityLevel >= 6;
+            
+            // On ajoute dynamiquement la classe si la carte est Épique, Enchantée ou Iconique
+            cardItem.className = `missing-card-item ${isFoilEffect ? 'foil-epic-card' : ''}`;
             
             const formattedPrice = (card.price && card.price > 0) ? `${card.price.toFixed(2).replace('.', ',')} €` : '';
             const priceSubText = formattedPrice ? `<div class="card-price-sub">${formattedPrice}</div>` : `<div class="card-price-sub" style="color: var(--text-muted); font-style: italic;">Prix N/C</div>`;
