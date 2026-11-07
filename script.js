@@ -213,11 +213,11 @@ async function renderCollectorModal() {
         return;
     }
 
-    // 1. Correction selon ton barème réel : 6 = Enchantée, 7 = Épique, 8 = Illustre
+    // 1. Correction selon ton barème réel : 6 = Épique, 7 = Enchantée, 8 = Iconique
     const rarityConfig = {
-        8: "Illustre",
-        7: "Épique",
-        6: "Enchantée"
+        8: "Iconique",
+        7: "Enchantée",
+        6: "Épique"
     };
 
     // 2. Regroupement par niveau de rareté réel
@@ -404,7 +404,7 @@ function renderRarities() {
     container.innerHTML = '';
 
     const row1Names = ["Commune", "Peu Commune", "Rare", "Super Rare", "Légendaire"];
-    const row2Names = ["Enchantée", "Épique", "Iconique"];
+    const row2Names = ["Épique", "Enchantée", "Iconique"];
 
     if (!selectedKey) {
         title.innerText = "Récapitulatif Global par Rareté (Tous chapitres sortis cumulés)";
