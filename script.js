@@ -444,11 +444,15 @@ function renderPromos() {
                 const itemMax = parseInt(item.max) || 0;
                 const itemPercent = itemMax > 0 ? ((itemOwned / itemMax) * 100).toFixed(0) : 0;
                 
+                const displayTitle = item.label 
+                    ? `<strong>${item.code}</strong> <span style="color: var(--text-muted); font-size: 0.7rem;">— ${item.label}</span>` 
+                    : `<strong>${item.code}</strong>`;
+
                 itemsHtml += `
                     <div style="margin-top: 8px; font-size: 0.75rem;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 2px; color: var(--text-main);">
-                            <span><strong>${item.code}</strong></span>
-                            <span style="color: var(--text-muted);">${itemOwned} / ${itemMax} (${itemPercent}%)</span>
+                        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px; margin-bottom: 2px; color: var(--text-main);">
+                            <span>${displayTitle}</span>
+                            <span style="color: var(--text-muted); white-space: nowrap;">${itemOwned} / ${itemMax} (${itemPercent}%)</span>
                         </div>
                         <div style="background: rgba(255,255,255,0.08); border-radius: 4px; height: 6px; overflow: hidden; position: relative;">
                             <div style="background: var(--gold); width: ${itemPercent}%; height: 100%; border-radius: 4px;"></div>
