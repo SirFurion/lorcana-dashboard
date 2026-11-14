@@ -838,3 +838,9 @@ header {
 .missing-card-item.foil-epic-card:hover::after {
     transform: rotate(35deg) translateY(100%);
 }
+
+.rarity-card.completed-100 {
+    border-color: var(--gold);
+    box-shadow: 0 0 12px rgba(243, 206, 120, 0.4);
+    background: linear-gradient(135deg, rgba(45, 38, 15, 0.85), rgba(15, 23, 42, 0.9));
+}
