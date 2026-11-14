@@ -416,13 +416,36 @@ function initDashboard() {
 
 function renderPromos() {
     const container = document.getElementById('promo-container');
+    const promoFill = document.getElementById('promo-fill');
+    const promoNumbers = document.getElementById('promo-numbers');
+    const promoPercentEl = document.getElementById('promo-percent');
+
     if (!container) return;
     container.innerHTML = '';
 
     if (!promoGroupsData || Object.keys(promoGroupsData).length === 0) {
+        if (promoFill) promoFill.style.width = '0%';
+        if (promoPercentEl) promoPercentEl.innerText = '0%';
+        if (promoNumbers) promoNumbers.innerText = '0 / 0 cartes';
         container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Aucune donnée promo disponible.</div>`;
         return;
     }
+
+    // --- CALCUL DE LA JAUGE GLOBALE PROMO ---
+    let totalPromoOwned = 0;
+    let totalPromoMax = 0;
+
+    Object.values(promoGroupsData).forEach(stats => {
+        totalPromoOwned += parseInt(stats.owned) || 0;
+        totalPromoMax += parseInt(stats.max) || 0;
+    });
+
+    const totalPromoPercent = totalPromoMax > 0 ? ((totalPromoOwned / totalPromoMax) * 100).toFixed(0) : 0;
+
+    if (promoFill) promoFill.style.width = totalPromoPercent + '%';
+    if (promoPercentEl) promoPercentEl.innerText = totalPromoPercent + '%';
+    if (promoNumbers) promoNumbers.innerText = `${totalPromoOwned} / ${totalPromoMax} cartes`;
+    // -----------------------------------------
 
     const promoRow = document.createElement('div');
     promoRow.className = 'rarities-row-flex';
