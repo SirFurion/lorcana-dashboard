@@ -339,7 +339,34 @@ async function fetchSheetData() {
 }
 
 function initDashboard() {
+function initDashboard() {
     if (!chaptersData || Object.keys(chaptersData).length === 0) return;
+
+    // --- CALCUL DE LA NOUVELLE JAUGE MASTER SET (Commune -> Iconique) ---
+    let masterOwned = 0;
+    let masterMax = 0;
+    const masterRaritiesList = ["Commune", "Peu Commune", "Rare", "Super Rare", "Légendaire", "Épique", "Enchantée", "Iconique"];
+
+    Object.values(chaptersData).forEach(chap => {
+        if (chap.released && chap.rarities) {
+            masterRaritiesList.forEach(rName => {
+                if (chap.rarities[rName]) {
+                    const parts = chap.rarities[rName].split('/');
+                    const owned = parseInt(parts[0].trim()) || 0;
+                    const total = parseInt(parts[1].trim()) || 0;
+                    masterOwned += owned;
+                    masterMax += total;
+                }
+            });
+        }
+    });
+
+    const masterPercent = masterMax > 0 ? ((masterOwned / masterMax) * 100).toFixed(0) : 0;
+
+    document.getElementById('master-fill').style.width = masterPercent + '%';
+    document.getElementById('master-numbers').innerText = `${masterOwned} / ${masterMax} cartes`;
+    document.getElementById('master-percent').innerText = masterPercent + '%';
+    // ------------------------------------------------------------------
 
     const yearsMap = { 1: [], 2: [], 3: [], 4: [] };
     Object.keys(chaptersData).forEach(key => {
