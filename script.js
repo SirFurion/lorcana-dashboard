@@ -434,16 +434,39 @@ function renderPromos() {
     Object.entries(promoGroupsData).forEach(([groupName, stats]) => {
         const owned = parseInt(stats.owned) || 0;
         const max = parseInt(stats.max) || 0;
-        const codesList = Array.isArray(stats.codes) ? stats.codes.join(' • ') : '';
-
         const percent = max > 0 ? ((owned / max) * 100).toFixed(0) : 0;
         const isCompleted = max > 0 && owned >= max;
 
+        let itemsHtml = '';
+        if (Array.isArray(stats.items)) {
+            stats.items.forEach(item => {
+                const itemOwned = parseInt(item.owned) || 0;
+                const itemMax = parseInt(item.max) || 0;
+                const itemPercent = itemMax > 0 ? ((itemOwned / itemMax) * 100).toFixed(0) : 0;
+                
+                itemsHtml += `
+                    <div style="margin-top: 8px; font-size: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 2px; color: var(--text-main);">
+                            <span><strong>${item.code}</strong></span>
+                            <span style="color: var(--text-muted);">${itemOwned} / ${itemMax} (${itemPercent}%)</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.08); border-radius: 4px; height: 6px; overflow: hidden; position: relative;">
+                            <div style="background: var(--gold); width: ${itemPercent}%; height: 100%; border-radius: 4px;"></div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
         promoRow.innerHTML += `
-            <div class="rarity-card ${isCompleted ? 'completed-100' : ''}" style="min-width: 210px; max-width: 260px;">
-                <div class="rarity-name">${groupName}</div>
-                <div class="rarity-value" style="margin-top: 4px;">${owned} / ${max} (${percent}%)</div>
-                ${codesList ? `<div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 4px;">${codesList}</div>` : ''}
+            <div class="rarity-card ${isCompleted ? 'completed-100' : ''}" style="min-width: 240px; max-width: 280px; text-align: left; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div class="rarity-name" style="font-size: 0.95rem; margin-bottom: 2px;">${groupName}</div>
+                    <div class="rarity-value" style="font-size: 0.85rem; color: var(--gold); margin-bottom: 8px;">${owned} / ${max} (${percent}%)</div>
+                </div>
+                <div style="border-top: 1px solid rgba(243, 206, 120, 0.2); padding-top: 6px; margin-top: 4px;">
+                    ${itemsHtml}
+                </div>
             </div>
         `;
     });
