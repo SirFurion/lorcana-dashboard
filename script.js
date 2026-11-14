@@ -415,12 +415,8 @@ function initDashboard() {
     });
 
     renderRarities();
-
-    const promoGroups = {
-    "Packs Promo": ["P1", "P2", "P3", "P4"],
-    "Conventions & Challenge": ["C1", "C2", "C3", "CC1", "CC2"],
-    "Éditions Spéciales": ["D23", "RPH", "DIS", "PD1"]
-};
+    renderPromos(); // <-- Appel de l'affichage des promos ici
+}
 
 function renderPromos() {
     const container = document.getElementById('promo-container');
