@@ -14,6 +14,7 @@ const rarityIcons = {
 let chaptersData = {};
 let missingCardsList = [];
 let collectorCardsList = [];
+let promoGroupsData = {};
 let selectedKey = null;
 
 // ==========================================
@@ -310,6 +311,11 @@ async function fetchSheetData() {
         chaptersData = data.chaptersData;
         missingCardsList = data.missingCards || [];
         collectorCardsList = data.collectorCards || [];
+        promoGroupsData = data.promoGroups || {
+            "Packs Promo": { owned: 41, max: 57, codes: ["P1", "P2", "P3", "P4"] },
+            "Conventions & Challenge": { owned: 10, max: 24, codes: ["C1", "C2", "C3", "CC1", "CC2"] },
+            "Éditions Spéciales": { owned: 9, max: 15, codes: ["D23", "RPH", "DIS", "PD1"] }
+        };
         
         const globalOwned = data.global.owned;
         const globalMax = data.global.max;
@@ -409,8 +415,46 @@ function initDashboard() {
     });
 
     renderRarities();
-}
 
+    const promoGroups = {
+    "Packs Promo": ["P1", "P2", "P3", "P4"],
+    "Conventions & Challenge": ["C1", "C2", "C3", "CC1", "CC2"],
+    "Éditions Spéciales": ["D23", "RPH", "DIS", "PD1"]
+};
+
+function renderPromos() {
+    const container = document.getElementById('promo-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (!promoGroupsData || Object.keys(promoGroupsData).length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.85rem;">Aucune donnée promo disponible.</div>`;
+        return;
+    }
+
+    const promoRow = document.createElement('div');
+    promoRow.className = 'rarities-row-flex';
+
+    Object.entries(promoGroupsData).forEach(([groupName, stats]) => {
+        const owned = parseInt(stats.owned) || 0;
+        const max = parseInt(stats.max) || 0;
+        const codesList = Array.isArray(stats.codes) ? stats.codes.join(' • ') : '';
+
+        const percent = max > 0 ? ((owned / max) * 100).toFixed(0) : 0;
+        const isCompleted = max > 0 && owned >= max;
+
+        promoRow.innerHTML += `
+            <div class="rarity-card ${isCompleted ? 'completed-100' : ''}" style="min-width: 210px; max-width: 260px;">
+                <div class="rarity-name">${groupName}</div>
+                <div class="rarity-value" style="margin-top: 4px;">${owned} / ${max} (${percent}%)</div>
+                ${codesList ? `<div style="font-size: 0.65rem; color: var(--text-muted); margin-top: 4px;">${codesList}</div>` : ''}
+            </div>
+        `;
+    });
+
+    container.appendChild(promoRow);
+}
+    
 function selectChapter(key) {
     selectedKey = (selectedKey === key) ? null : key;
     initDashboard();
