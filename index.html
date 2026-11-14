@@ -106,9 +106,20 @@
             <div class="reset-hint" id="reset-hint" style="display: none;" onclick="resetSelection()">🔄 Revenir au récapitulatif global</div>
         </div>
 
-        <!-- Progression des Cartes Promo -->
+       <!-- Progression des Cartes Promo -->
         <div class="rarities-box">
-            <div class="section-title" style="margin-bottom: 15px;">Suivi des Cartes Promo & Événements</div>
+            <div class="section-title" style="margin-bottom: 10px;">Suivi des Cartes Promo & Événements</div>
+            
+            <!-- Jauge Globale Promo -->
+            <div class="custom-gauge-wrapper" style="margin-bottom: 8px;">
+                <div id="promo-fill" class="custom-gauge-fill" style="width: 0%;"></div>
+                <img src="https://raw.githubusercontent.com/SirFurion/lorcana-dashboard/refs/heads/main/assets/images/jauge_border.png" class="custom-gauge-border" alt="Cadre de jauge">
+                <div id="promo-percent" class="custom-gauge-badge">0%</div>
+            </div>
+            <div class="progress-text" style="text-align: center; margin-bottom: 18px;">
+                <span id="promo-numbers">Chargement...</span>
+            </div>
+
             <div class="rarities-grid" id="promo-container"></div>
         </div>
         
