@@ -99,11 +99,9 @@ async function renderMissingCardsModal() {
         cards.forEach(card => {
             const cardItem = document.createElement('div');
             
-            // --- AJOUT : Vérification de la rareté (>= 6) ---
             const rarityLevel = parseInt(card.rarity) || 0;
             const isFoilEffect = rarityLevel >= 6;
             
-            // On ajoute dynamiquement la classe si la carte est Épique, Enchantée ou Iconique
             cardItem.className = `missing-card-item ${isFoilEffect ? 'foil-epic-card' : ''}`;
             
             const formattedPrice = (card.price && card.price > 0) ? `${card.price.toFixed(2).replace('.', ',')} €` : '';
@@ -162,7 +160,6 @@ function closeCollectorModal() {
 function openCollectorZoom(cardInput) {
     if (!cardInput) return;
 
-    // Gestion souple si on passe un objet ou juste une string URL
     const imageUrl = typeof cardInput === 'string' ? cardInput : cardInput.imageUrl;
     const layout = typeof cardInput === 'object' ? cardInput.layout : 'normal';
 
@@ -178,14 +175,12 @@ function openCollectorZoom(cardInput) {
 
     const isLandscape = (layout === 'landscape');
 
-    // On injecte la classe is-landscape si nécessaire
     zoomOverlay.innerHTML = `
         <div class="collector-zoom-card-container ${isLandscape ? 'is-landscape' : ''}" id="zoom-card-container">
             <img src="${imageUrl}" class="card-zoom-img" alt="Zoom Carte">
         </div>
     `;
     
-    // Fermeture au clic sur l'overlay
     zoomOverlay.onclick = () => {
         closeCollectorZoom();
     };
@@ -219,17 +214,15 @@ async function renderCollectorModal() {
         return;
     }
 
-    // 1. Correction selon ton barème réel : 6 = Épique, 7 = Enchantée, 8 = Iconique
     const rarityConfig = {
         8: "Iconique",
         7: "Enchantée",
         6: "Épique"
     };
 
-    // 2. Regroupement par niveau de rareté réel
     const groupedByRarity = {};
     collectorCardsList.forEach(card => {
-        const rKey = card.rarity; // 6, 7 ou 8
+        const rKey = card.rarity;
         if (!groupedByRarity[rKey]) groupedByRarity[rKey] = [];
         groupedByRarity[rKey].push(card);
     });
@@ -241,12 +234,10 @@ async function renderCollectorModal() {
     summaryBanner.innerHTML = `Vitrine de la collection : <strong style="color: var(--gold);">${collectorCardsList.length} carte${collectorCardsList.length > 1 ? 's' : ''} d'exception</strong>`;
     container.appendChild(summaryBanner);
 
-    // 3. Ordre d'affichage (du plus rare / haut niveau au plus bas : 8, 7, 6)
     [8, 7, 6].forEach(rarityLevel => {
         const cards = groupedByRarity[rarityLevel];
-        if (!cards || cards.length === 0) return; // Omis si vide
+        if (!cards || cards.length === 0) return;
 
-        // Tri des cartes du plus petit chapitre au plus grand au sein de chaque rareté
         cards.sort((a, b) => {
             const numA = parseInt(String(a.chapter).replace(/\D/g, '')) || 0;
             const numB = parseInt(String(b.chapter).replace(/\D/g, '')) || 0;
@@ -270,7 +261,6 @@ async function renderCollectorModal() {
             const cardItem = document.createElement('div');
             cardItem.className = 'missing-card-item';
 
-            // Affichage : "Chapitre X - Nom de la carte"
             const displayTitle = `${card.chapter} - ${card.name}`;
 
             cardItem.innerHTML = `
@@ -294,11 +284,10 @@ async function fetchCollectorCardImage(setCode, cardNumber, itemElement) {
 
         const data = await response.json();
         const imageUrl = data.image_uris?.digital?.normal || '';
-        const layout = data.layout || 'normal'; // 'landscape' pour les lieux !
+        const layout = data.layout || 'normal';
 
         if (imageUrl) {
             imgWrapper.innerHTML = `<img src="${imageUrl}" class="missing-card-img" alt="Carte">`;
-            // On passe un objet à la fonction de zoom
             imgWrapper.onclick = () => openCollectorZoom({ imageUrl, layout });
         } else {
             imgWrapper.innerHTML = `<span style="font-size: 0.6rem; color: #ff6b6b; display: flex; align-items: center; justify-content: center; height: 100%;">Indisponible</span>`;
@@ -339,10 +328,9 @@ async function fetchSheetData() {
 }
 
 function initDashboard() {
-function initDashboard() {
     if (!chaptersData || Object.keys(chaptersData).length === 0) return;
 
-    // --- CALCUL DE LA NOUVELLE JAUGE MASTER SET (Commune -> Iconique) ---
+    // --- CALCUL DE LA JAUGE MASTER SET (Commune -> Iconique) ---
     let masterOwned = 0;
     let masterMax = 0;
     const masterRaritiesList = ["Commune", "Peu Commune", "Rare", "Super Rare", "Légendaire", "Épique", "Enchantée", "Iconique"];
@@ -363,10 +351,14 @@ function initDashboard() {
 
     const masterPercent = masterMax > 0 ? ((masterOwned / masterMax) * 100).toFixed(0) : 0;
 
-    document.getElementById('master-fill').style.width = masterPercent + '%';
-    document.getElementById('master-numbers').innerText = `${masterOwned} / ${masterMax} cartes`;
-    document.getElementById('master-percent').innerText = masterPercent + '%';
-    // ------------------------------------------------------------------
+    const masterFill = document.getElementById('master-fill');
+    const masterNumbers = document.getElementById('master-numbers');
+    const masterPercentEl = document.getElementById('master-percent');
+
+    if (masterFill) masterFill.style.width = masterPercent + '%';
+    if (masterNumbers) masterNumbers.innerText = `${masterOwned} / ${masterMax} cartes`;
+    if (masterPercentEl) masterPercentEl.innerText = masterPercent + '%';
+    // -------------------------------------------------------------
 
     const yearsMap = { 1: [], 2: [], 3: [], 4: [] };
     Object.keys(chaptersData).forEach(key => {
@@ -534,6 +526,5 @@ function buildTwoRowsGrid(container, dataObj, row1Keys, row2Keys) {
     if (row1.children.length > 0) container.appendChild(row1);
     if (row2.children.length > 0) container.appendChild(row2);
 }
-
 
 window.onload = fetchSheetData;
