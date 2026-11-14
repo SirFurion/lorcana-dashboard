@@ -467,11 +467,13 @@ function buildTwoRowsGrid(container, dataObj, row1Keys, row2Keys) {
     row1Keys.forEach(name => {
         if (dataObj && dataObj[name]) {
             const parts = dataObj[name].split('/');
+            const owned = parseInt(parts[0].trim()) || 0;
             const totalVal = parts.length > 1 ? parseInt(parts[1].trim()) : 1;
             if (totalVal > 0) {
+                const isCompleted = owned >= totalVal;
                 const iconUrl = rarityIcons[name] || '';
                 row1.innerHTML += `
-                    <div class="rarity-card">
+                    <div class="rarity-card ${isCompleted ? 'completed-100' : ''}">
                         ${iconUrl ? `<img src="${iconUrl}" class="rarity-icon" alt="${name}">` : ''}
                         <div class="rarity-name">${name}</div>
                         <div class="rarity-value">${dataObj[name]}</div>
@@ -486,11 +488,13 @@ function buildTwoRowsGrid(container, dataObj, row1Keys, row2Keys) {
     row2Keys.forEach(name => {
         if (dataObj && dataObj[name]) {
             const parts = dataObj[name].split('/');
+            const owned = parseInt(parts[0].trim()) || 0;
             const totalVal = parts.length > 1 ? parseInt(parts[1].trim()) : 1;
             if (totalVal > 0) {
+                const isCompleted = owned >= totalVal;
                 const iconUrl = rarityIcons[name] || '';
                 row2.innerHTML += `
-                    <div class="rarity-card">
+                    <div class="rarity-card ${isCompleted ? 'completed-100' : ''}">
                         ${iconUrl ? `<img src="${iconUrl}" class="rarity-icon" alt="${name}">` : ''}
                         <div class="rarity-name">${name}</div>
                         <div class="rarity-value">${dataObj[name]}</div>
@@ -503,5 +507,6 @@ function buildTwoRowsGrid(container, dataObj, row1Keys, row2Keys) {
     if (row1.children.length > 0) container.appendChild(row1);
     if (row2.children.length > 0) container.appendChild(row2);
 }
+
 
 window.onload = fetchSheetData;
