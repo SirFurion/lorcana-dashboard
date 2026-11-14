@@ -311,11 +311,7 @@ async function fetchSheetData() {
         chaptersData = data.chaptersData;
         missingCardsList = data.missingCards || [];
         collectorCardsList = data.collectorCards || [];
-        promoGroupsData = data.promoGroups || {
-            "Packs Promo": { owned: 41, max: 57, codes: ["P1", "P2", "P3", "P4"] },
-            "Conventions & Challenge": { owned: 10, max: 24, codes: ["C1", "C2", "C3", "CC1", "CC2"] },
-            "Éditions Spéciales": { owned: 9, max: 15, codes: ["D23", "RPH", "DIS", "PD1"] }
-        };
+        promoGroupsData = data.promoGroups || [];
         
         const globalOwned = data.global.owned;
         const globalMax = data.global.max;
